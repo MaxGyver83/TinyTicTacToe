@@ -1,0 +1,16 @@
+/app/build/
+/app/src/main/libs/
+/app/src/main/obj/
+/app/src/main/jni/tinytictactoe
+/build/
+/compiled_resources/
+/out/
+/unused/
+/keystore.jks
+/README.html
+/resources.apk
+.gdb_history
+perf.data*
+stats.txt
+*.log
+*.patch
