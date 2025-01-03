@@ -2,7 +2,7 @@
 
 The classic tic-tac-toe game for Android and Linux/X11 written in C.
 
-<img src="screenshot_x11.png" alt="Screenshot" width="30%">
+<img src="img/screenshot-x11.png" alt="Screenshot" width="30%">
 
 ## Features
 
@@ -10,7 +10,8 @@ The classic tic-tac-toe game for Android and Linux/X11 written in C.
 
 Its APK file is smaller than 80 kB. For comparison:
 
-<img src="plot/bars.png" alt="tic-tac-toe games APK size comparison" width="100%">
+<img src="img/apk-size-comparison.png"
+     alt="tic-tac-toe games APK size comparison" width="100%">
 
 The bar for _Tiny Tic Tac Toe_ isn't visible because it's so tiny (about half a
 pixel).
