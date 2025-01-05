@@ -36,6 +36,8 @@ layout_row_add(LayoutRow *row, Texture texture, float width, float height)
 Rectangle
 layout_row_end(LayoutRow *row)
 {
+	if (!row)
+		return (Rectangle){0};
 	int widget_count = 0;
 	float width_sum = 0.0f;
 	if (row->widgets) {
@@ -61,6 +63,8 @@ layout_row_end(LayoutRow *row)
 void
 layout_row_render(LayoutRow *row)
 {
+	if (!row)
+		return;
 	float x = row->x;
 	Widget *widget = row->widgets;
 	do {
@@ -78,12 +82,13 @@ layout_row_render(LayoutRow *row)
 void
 layout_row_free_all(LayoutRow *row)
 {
+	if (!row)
+		return;
 	Widget *widget = row->widgets;
-	Widget *next;
-	do {
-		next = widget->next;
+	while (widget) {
+		Widget *next = widget->next;
 		free(widget);
 		widget = next;
-	} while (next != NULL);
+	};
 	free(row);
 }
