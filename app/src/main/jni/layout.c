@@ -67,7 +67,7 @@ layout_row_render(LayoutRow *row)
 		return;
 	float x = row->x;
 	Widget *widget = row->widgets;
-	do {
+	while (widget) {
 		Rectangle r = render_texture(
 				widget->texture,
 				x,
@@ -76,7 +76,8 @@ layout_row_render(LayoutRow *row)
 				widget->height,
 				ALIGN_TOP_LEFT);
 		x += r.w + row->spacing;
-	} while ((widget = widget->next));
+		widget = widget->next;
+	};
 }
 
 void
