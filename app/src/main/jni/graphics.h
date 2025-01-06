@@ -42,14 +42,15 @@ typedef enum {
 	ALIGN_BOTTOM_RIGHT,
 } Alignment;
 
-unsigned char * create_x_bitmap(int size, const Pixel color);
-unsigned char * create_o_bitmap(int size, const Pixel color);
+unsigned char * create_x_bitmap(int size, const Pixel pixel);
+unsigned char * create_o_bitmap(int size, const Pixel pixel);
 Texture load_texture(const char *asset_path);
-GLuint load_texture_from_bitmap(const Pixel bitmap, int width, int height);
+GLuint load_texture_from_bitmap(const unsigned char *bitmap, int width, int height);
 Rectangle render_texture(Texture texture, float x, float y, float width, float height, Alignment align);
-void draw_filled_rectangle(const Pixel color, Rectangle r);
-void draw_filled_region(const Pixel color, float x, float y, float width, float height);
-void draw_rectangle(const Pixel color, float thickness, float x, float y, float width, float height);
-void draw_rectangle_centered(const Pixel color, float thickness, float center_x, float center_y, float width, float height);
+Color pixel_to_color(const Pixel pixel);
+void draw_filled_rectangle(const Color c, Rectangle r);
+void draw_filled_region(const Color c, float x, float y, float width, float height);
+void draw_rectangle(const Color c, float thickness, float x, float y, float width, float height);
+void draw_rectangle_centered(const Color c, float thickness, float center_x, float center_y, float width, float height);
 
 #endif // TEXTURE_H

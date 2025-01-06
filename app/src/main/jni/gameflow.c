@@ -207,7 +207,7 @@ render_highlight(void)
 				box_size,
 				game_area.h,
 				ALIGN_TOP_LEFT);
-		/* draw_filled_region(color, */
+		/* draw_filled_region(pixel_to_color(color), */
 		/*         game_area.x + line_index * box_size, */
 		/*         game_area.y, */
 		/*         box_size, */
@@ -341,7 +341,7 @@ render_game_information(void)
 	b_settings = layout_row_end(row);
 	layout_row_render(row);
 	layout_row_free_all(row);
-	draw_filled_rectangle(buttoncolor, make_button(b_settings));
+	draw_filled_rectangle(pixel_to_color(buttoncolor), make_button(b_settings));
 }
 
 void

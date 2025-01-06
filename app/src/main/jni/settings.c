@@ -57,8 +57,8 @@ render_window()
 		initialize();
 
 	Rectangle r = settings_window_rect;
-	draw_filled_rectangle(bgcolor, r);
-	draw_rectangle(bordercolor, 5.0f, r.x, r.y, r.w, r.h);
+	draw_filled_rectangle(pixel_to_color(bgcolor), r);
+	draw_rectangle(pixel_to_color(bordercolor), 5.0f, r.x, r.y, r.w, r.h);
 
 	float padding = win_width * 0.05f;
 	float y = r.y + padding;
@@ -77,7 +77,7 @@ render_window()
 
 	Rectangle b = b_difficulty[difficulty-1];
 	draw_rectangle_centered(
-		(Pixel){0, 0, 255, 255},
+		(Color){.r=0.0f, .g=0.0f, .b=1.0f, .a=1.0f},
 		5.0f,
 		b.x + b.w / 2,
 		b.y + b.h / 2,
