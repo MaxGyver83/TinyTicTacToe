@@ -80,7 +80,8 @@ ANDROIDVERSION=35
 ```
 
 If you use other folders or a different version of the NDK, modify the first
-lines of [build.sh](./build.sh) accordingly.
+lines of [build_apk.sh](./build_apk.sh), [build_aab.sh](./build_aab.sh),
+[run.sh](./run.sh) accordingly.
 
 Optionally, copy/symlink your existing keystore to `./keystore.jks` and export
 `$KEYSTORE_PASSWORD` and `$KEYSTORE_ALIAS`. Otherwise, replace "`Your Name`",
