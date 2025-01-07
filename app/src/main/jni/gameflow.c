@@ -63,35 +63,21 @@ static Texture
 create_grid(int size)
 {
 	int thickness = 5;
-	unsigned char *buf = malloc(size * size * BYTES_PER_PIXEL);
-	memset(buf, 255, size * size * BYTES_PER_PIXEL);
+	unsigned char *buf = malloc(size * size * BYTES_PER_RGBA_PIXEL);
+	memset(buf, 255, size * size * BYTES_PER_RGBA_PIXEL);
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
 			if (i % (size / 3) < thickness || i >= size - thickness
 					|| j % (size / 3) < thickness || j >= size - thickness) {
 				int pixel_index = i * size + j;
 				// black pixel {0, 0, 0}, alpha keeps default value of 255
-				memset(&buf[pixel_index * BYTES_PER_PIXEL], 0, 3);
+				memset(&buf[pixel_index * BYTES_PER_RGBA_PIXEL], 0, 3);
 			}
 		}
 	}
-	Texture t = {
-		.t = load_texture_from_bitmap(buf, (unsigned)size, (unsigned)size),
-		.w = size,
-		.h = size,
-	};
+	Texture t = load_texture_from_raw_data(buf, (unsigned)size, (unsigned)size);
 	free(buf);
 	return t;
-}
-
-static Texture
-create_highlight(const Pixel color)
-{
-	return (Texture){
-		.t = load_texture_from_bitmap(color, 1, 1),
-			.w = 1,
-			.h = 1,
-	};
 }
 
 static void
@@ -141,8 +127,8 @@ init_game()
 {
 	srand(time(NULL));
 	t_grid = create_grid(win_width * 0.9f);
-	t_x_highlight = create_highlight(color_x_highlight);
-	t_o_highlight = create_highlight(color_o_highlight);
+	t_x_highlight = load_texture_from_raw_data(color_x_highlight, 1, 1);
+	t_o_highlight = load_texture_from_raw_data(color_o_highlight, 1, 1);
 
 	// sprites
 	char filename[16];
@@ -153,14 +139,11 @@ init_game()
 			return false;
 	}
 
-	t_x.w = t_x.h = 100;
-	unsigned char *buf = create_x_bitmap(t_x.w, color_x);
-	t_x.t = load_texture_from_bitmap(buf, t_x.w, t_x.h);
-	free(buf);
-	t_o.w = t_o.h = 200;
-	buf = create_o_bitmap(t_o.w, color_o);
-	t_o.t = load_texture_from_bitmap(buf, t_o.w, t_o.h);
-	free(buf);
+	struct Pixmap pixmap = create_x_pixmap(100, color_x);
+	t_x = load_texture_from_pixmap_and_free_data(pixmap);
+
+	pixmap = create_o_pixmap(200, color_o);
+	t_o = load_texture_from_pixmap_and_free_data(pixmap);
 
 	t_tinytictactoe = load_texture("sprites/tiny_tic_tac_toe.png");
 	t_nextturn = load_texture("sprites/next_turn.png");

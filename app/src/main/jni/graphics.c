@@ -10,8 +10,9 @@
 #include <stdlib.h>                   // for calloc
 #include <string.h>                   // for memcpy
 #include "init.h"                     // for g_position_handle, texture_program
+#include "pixmap.h"                   // for Pixmap, rgb_to_rgba, bitmap_to_...
 #include "lib/upng.h"                 // for upng_get_components, upng_get_e...
-#include "utils.h"                    // for error, info
+#include "utils.h"                    // for error
 
 #define SQR(x) ((x) * (x))
 
@@ -19,37 +20,42 @@ extern GLuint color_program;
 
 Texture no_texture = {0};
 
-unsigned char *
-create_x_bitmap(int size, const Pixel pixel)
+struct Pixmap
+create_x_pixmap(int size, const Pixel pixel)
 {
 	int width = size;
 	int height = size;
 	float thickness = size / 10.0f;
-	int byte_count = width * height * BYTES_PER_PIXEL;
+	int byte_count = width * height * BYTES_PER_RGBA_PIXEL;
 	unsigned char *buffer = calloc(byte_count, 1);
 	for (int x = 0 + thickness; x < width - thickness; x++) {
 		for (int distance = -thickness/2; distance < thickness/2; distance++) {
 			int x2 = x - distance;
 			int y2 = x + distance;
-			int byte_pos = (y2 * width + x2) * BYTES_PER_PIXEL;
-			memcpy(&buffer[byte_pos], pixel, BYTES_PER_PIXEL);
+			int byte_pos = (y2 * width + x2) * BYTES_PER_RGBA_PIXEL;
+			memcpy(&buffer[byte_pos], pixel, BYTES_PER_RGBA_PIXEL);
 
-			byte_pos = (y2 * width + (width - 1 - x2)) * BYTES_PER_PIXEL;
-			memcpy(&buffer[byte_pos], pixel, BYTES_PER_PIXEL);
+			byte_pos = (y2 * width + (width - 1 - x2)) * BYTES_PER_RGBA_PIXEL;
+			memcpy(&buffer[byte_pos], pixel, BYTES_PER_RGBA_PIXEL);
 
 			y2++;
-			byte_pos = (y2 * width + x2) * BYTES_PER_PIXEL;
-			memcpy(&buffer[byte_pos], pixel, BYTES_PER_PIXEL);
+			byte_pos = (y2 * width + x2) * BYTES_PER_RGBA_PIXEL;
+			memcpy(&buffer[byte_pos], pixel, BYTES_PER_RGBA_PIXEL);
 
-			byte_pos = (y2 * width + (width - 1 - x2)) * BYTES_PER_PIXEL;
-			memcpy(&buffer[byte_pos], pixel, BYTES_PER_PIXEL);
+			byte_pos = (y2 * width + (width - 1 - x2)) * BYTES_PER_RGBA_PIXEL;
+			memcpy(&buffer[byte_pos], pixel, BYTES_PER_RGBA_PIXEL);
 		}
 	}
-	return buffer;
+	return (struct Pixmap){
+		.w = width,
+		.h = height,
+		.bytes_per_pixel = BYTES_PER_RGBA_PIXEL,
+		.data = buffer,
+	};
 }
 
-unsigned char *
-create_o_bitmap(int size, const Pixel pixel)
+struct Pixmap
+create_o_pixmap(int size, const Pixel pixel)
 {
 	int width = size;
 	int height = size;
@@ -57,7 +63,7 @@ create_o_bitmap(int size, const Pixel pixel)
 	float radius = size / 2.0f - thickness;
 	float xcenter = width / 2.0f;
 	float ycenter = height / 2.0f;
-	int byte_count = width * height * BYTES_PER_PIXEL;
+	int byte_count = width * height * BYTES_PER_RGBA_PIXEL;
 	unsigned char *buffer = calloc(byte_count, 1);
 	for (int x = 0; x < width; x++) {
 		int relx = x - xcenter;
@@ -65,20 +71,24 @@ create_o_bitmap(int size, const Pixel pixel)
 			int rely = y - ycenter;
 			if (SQR(relx) + SQR(rely) >= SQR(radius - thickness/2)
 					&& SQR(relx) + SQR(rely) <= SQR(radius + thickness/2)) {
-				int byte_pos = (y * width + x) * BYTES_PER_PIXEL;
-				memcpy(&buffer[byte_pos], pixel, BYTES_PER_PIXEL);
+				int byte_pos = (y * width + x) * BYTES_PER_RGBA_PIXEL;
+				memcpy(&buffer[byte_pos], pixel, BYTES_PER_RGBA_PIXEL);
 			}
 
 		}
 	}
-	return buffer;
+	return (struct Pixmap){
+		.w = width,
+		.h = height,
+		.bytes_per_pixel = BYTES_PER_RGBA_PIXEL,
+		.data = buffer,
+	};
 }
 
 Texture
 load_texture(const char *asset_path)
 {
 	upng_t *png;
-	GLuint texture;
 
 #ifdef X11
 	if (asset_path[0] == '/') {
@@ -93,7 +103,7 @@ load_texture(const char *asset_path)
 	AAsset *file;
 	file = AAssetManager_open(g_app->activity->assetManager, asset_path, AASSET_MODE_BUFFER);
 	if (!file) {
-		info("Failed to open asset file: %s", asset_path);
+		error("Failed to open asset file: %s", asset_path);
 		return no_texture;
 	}
 
@@ -126,52 +136,44 @@ load_texture(const char *asset_path)
 	unsigned w = upng_get_width(png);
 	unsigned h = upng_get_height(png);
 
-	const unsigned char *data = upng_get_buffer(png);
+	const unsigned char *upng_buf = upng_get_buffer(png);
 	/* printf("asset_path: %s, channels: %d\n", asset_path, upng_get_components(png)); */
-	if (upng_get_components(png) == 3) {
+	unsigned char *rgba_buf = NULL;
+	int bytes_per_pixel = upng_get_bpp(png);
+	if (bytes_per_pixel == 3) {
 		// add alpha channel
 		printf("asset_path: %s, channels: %d\n", asset_path, upng_get_components(png));
-		unsigned char *new_data = calloc(w * h * BYTES_PER_PIXEL, 1);
-		for (unsigned int i = 0; i < w * h; i++) {
-			int pixel_index = i * BYTES_PER_PIXEL;
-			memcpy(&new_data[pixel_index], &data[i * 3], 3);
-			new_data[pixel_index + 3] = 255;
-		}
-		/* free(data); */
-		data = new_data;
-	} else if (upng_get_components(png) == 1) {
+		rgba_buf = rgb_to_rgba(upng_buf, w * h);
+	} else if (bytes_per_pixel == 1) {
 		printf("asset_path: %s, channels: %d\n", asset_path, upng_get_components(png));
-		// add alpha channel
-		unsigned char *new_data = calloc(w * h * BYTES_PER_PIXEL, 1);
-		for (unsigned int i = 0; i < w * h; i++) {
-			int pixel_index = i * BYTES_PER_PIXEL;
-			if (data[i])
-				new_data[pixel_index + 3] = 255;
-		}
-		/* free(data); */
-		data = new_data;
+		rgba_buf = bitmap_to_rgba(upng_buf, w * h);
+	} else {
+		rgba_buf = (unsigned char *)upng_buf;
 	}
-	texture = load_texture_from_bitmap(data, w, h);
+	Texture texture = load_texture_from_raw_data(rgba_buf, w, h);
 
 	upng_free(png);
+	if (bytes_per_pixel == 1 || bytes_per_pixel == 3)
+		free(rgba_buf);
 
 	AAsset_close(file);
 
-	if (!texture) {
-		info("Error load texture '%s'", asset_path);
+	if (!texture.t) {
+		error("Error load texture '%s'", asset_path);
 		return no_texture;
 	}
-	return (Texture){texture, (int)w, (int)h};
+	return texture;
 }
 
-GLuint
-load_texture_from_bitmap(const unsigned char *bitmap, int width, int height)
+Texture
+load_texture_from_raw_data(const unsigned char *bitmap, int width, int height)
 {
+	GLuint texture_id = 0;
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	GLuint texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glGenTextures(1, &texture_id);
+	glBindTexture(GL_TEXTURE_2D, texture_id);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -180,12 +182,24 @@ load_texture_from_bitmap(const unsigned char *bitmap, int width, int height)
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, bitmap);
 
-	if (!texture) {
-		info("Error while creating texture.");
-		return 0;
+	if (!texture_id) {
+		error("Error while creating texture.");
+		return no_texture;
 	}
 
-	return texture;
+	return (Texture){texture_id, width, height};
+}
+
+static Texture
+load_texture_from_pixmap(struct Pixmap pixmap) {
+	return load_texture_from_raw_data(pixmap.data, pixmap.w, pixmap.h);
+}
+
+Texture
+load_texture_from_pixmap_and_free_data(struct Pixmap pixmap) {
+	Texture t = load_texture_from_pixmap(pixmap);
+	free(pixmap.data);
+	return t;
 }
 
 static float
@@ -305,7 +319,7 @@ pixel_to_color(const Pixel pixel)
 	};
 }
 
-void
+static void
 draw_filled_region(const Color c, float x, float y, float width, float height)
 {
 	float normalized_left = normalize_x(x);
