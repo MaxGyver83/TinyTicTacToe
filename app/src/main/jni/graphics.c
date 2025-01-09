@@ -11,8 +11,10 @@
 #include <string.h>                   // for memcpy
 #include "init.h"                     // for g_position_handle, texture_program
 #include "pixmap.h"                   // for Pixmap, rgb_to_rgba, bitmap_to_...
-#include "lib/upng.h"                 // for upng_get_components, upng_get_e...
 #include "utils.h"                    // for error
+#ifdef X11
+#include "utils_x11.h"                // for read_file_to_buffer
+#endif
 
 #define SQR(x) ((x) * (x))
 
@@ -85,84 +87,77 @@ create_o_pixmap(int size, const Pixel pixel)
 	};
 }
 
+static char*
+read_pgm_asset(const char *filepath)
+{
+#ifdef X11
+	// prepend ../assets/
+	char adapted_path[256];
+	snprintf(adapted_path, sizeof(adapted_path), "../assets/%s", filepath);
+	return read_file_to_buffer(adapted_path);
+#else
+	AAsset *file;
+	file = AAssetManager_open(g_app->activity->assetManager, filepath, AASSET_MODE_BUFFER);
+	if (!file) {
+		error("Failed to open asset file: %s", filepath);
+		return NULL;
+	}
+	return (char*)AAsset_getBuffer(file);
+#endif
+}
+
+static Texture
+load_texture_from_pgm(const char *filepath)
+{
+	char *buffer = read_pgm_asset(filepath);
+	if (!buffer)
+		return no_texture;
+	char *line;
+	line = strtok(buffer, "\n");
+	if (!line || strcmp(line, "P5") != 0)
+		goto parse_error;
+
+	line = strtok(NULL, "\n");
+	if (!line)
+		goto parse_error;
+	int width, height;
+	if (sscanf(line, "%d %d", &width, &height) != 2)
+		goto parse_error;
+
+	line = strtok(NULL, "\n");
+	if (!line)
+		goto parse_error;
+	int maxval = 0;
+	if (sscanf(line, "%d", &maxval) != 1 || maxval != 255)
+		goto parse_error;
+
+	unsigned char *img = (unsigned char *)line;
+	while (*img)
+		img++;
+	img++;
+	if (!img)
+		goto parse_error;
+
+	unsigned char *rgba_buf = bitmap_to_rgba(img, width * height);
+	free(buffer);
+
+	return load_texture_from_raw_data(rgba_buf, width, height);
+
+parse_error:
+		error("Invalid PGM file");
+		free(buffer);
+		return no_texture;
+
+}
+
 Texture
 load_texture(const char *asset_path)
 {
-	upng_t *png;
+	if (endswith(".pgm", asset_path))
+		return load_texture_from_pgm(asset_path);
 
-#ifdef X11
-	if (asset_path[0] == '/') {
-		png = upng_new_from_file(asset_path);
-	} else {
-		// prepend ../assets/
-		char adapted_path[256];
-		snprintf(adapted_path, sizeof(adapted_path), "../assets/%s", asset_path);
-		png = upng_new_from_file(adapted_path);
-	}
-#else
-	AAsset *file;
-	file = AAssetManager_open(g_app->activity->assetManager, asset_path, AASSET_MODE_BUFFER);
-	if (!file) {
-		error("Failed to open asset file: %s", asset_path);
-		return no_texture;
-	}
-
-	unsigned char *buffer = (unsigned char*)AAsset_getBuffer(file);
-	unsigned long len_file = AAsset_getLength(file);
-
-	png = upng_new_from_bytes(buffer, len_file);
-#endif
-
-	if (png == NULL) {
-		error("Error allocating space for creating PNG from file: %s", asset_path);
-		AAsset_close(file);
-		return no_texture;
-	}
-	if (upng_get_error(png) != UPNG_EOK) {
-		error("Error creating PNG from file: %s (error %i)", asset_path, upng_get_error(png));
-		// upng_free(png); // this crashes in upng.c:1290
-		AAsset_close(file);
-		return no_texture;
-	}
-
-	upng_decode(png);
-	if (upng_get_error(png) != UPNG_EOK) {
-		error("Error decoding PNG from file: %s (error %i)", asset_path, upng_get_error(png));
-		upng_free(png);
-		AAsset_close(file);
-		return no_texture;
-	}
-
-	unsigned w = upng_get_width(png);
-	unsigned h = upng_get_height(png);
-
-	const unsigned char *upng_buf = upng_get_buffer(png);
-	/* printf("asset_path: %s, channels: %d\n", asset_path, upng_get_components(png)); */
-	unsigned char *rgba_buf = NULL;
-	int bytes_per_pixel = upng_get_bpp(png);
-	if (bytes_per_pixel == 3) {
-		// add alpha channel
-		printf("asset_path: %s, channels: %d\n", asset_path, upng_get_components(png));
-		rgba_buf = rgb_to_rgba(upng_buf, w * h);
-	} else if (bytes_per_pixel == 1) {
-		printf("asset_path: %s, channels: %d\n", asset_path, upng_get_components(png));
-		rgba_buf = bitmap_to_rgba(upng_buf, w * h);
-	} else {
-		rgba_buf = (unsigned char *)upng_buf;
-	}
-	Texture texture = load_texture_from_raw_data(rgba_buf, w, h);
-
-	upng_free(png);
-	if (bytes_per_pixel == 1 || bytes_per_pixel == 3)
-		free(rgba_buf);
-
-	AAsset_close(file);
-
-	if (!texture.t) {
-		error("Error load texture '%s'", asset_path);
-		return no_texture;
-	}
-	return texture;
+	error("Unexpected file ending!");
+	return no_texture;
 }
 
 Texture

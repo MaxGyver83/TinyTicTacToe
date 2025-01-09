@@ -10,6 +10,7 @@
 #include <stdarg.h>           // for va_end, va_start, va_list
 #include <stdio.h>            // for fprintf, stderr, NULL
 #include <stdlib.h>           // for rand, RAND_MAX
+#include <string.h>           // for strlen
 
 #define TAG "com.goodtemperapps.tinytictactoe"
 
@@ -86,3 +87,11 @@ random_int(int min, int max)
 	return min + rand() / (RAND_MAX / (max - min + 1) + 1);
 }
 
+bool
+endswith(const char *suffix, const char *str)
+{
+	size_t lenstr = strlen(str);
+	size_t lensuffix = strlen(suffix);
+	return lenstr >= lensuffix
+		&& strncmp(suffix, &str[lenstr-lensuffix], lensuffix) == 0;
+}

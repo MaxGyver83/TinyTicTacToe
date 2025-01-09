@@ -2,20 +2,22 @@
 set -e
 
 generate_filename() {
-    echo "$1.png" | tr ' ' '_' | tr -d ':!?' | tr '[:upper:]' '[:lower:]'
+    echo "$1" | tr ' ' '_' | tr -d ':!?' | tr '[:upper:]' '[:lower:]'
 }
 
 create_sprite() {
     text="$1"
     dpi="${2:-150}"
     margin="${3:-1}"
-    filename="${4:-$(generate_filename "$text")}"
-    pango-view --background=transparent --dpi=$dpi --margin=$margin -qo "$filename" <(echo "$text")
-    echo "Created $filename"
+    basename="${4:-$(generate_filename "$text")}"
+    pango-view --background=transparent --dpi=$dpi --margin=$margin -qo "$basename".png <(echo "$text")
+    pngtopam -alpha "$basename.png" > "$basename".pgm && rm "$basename.png"
+    echo "Created $basename.pgm"
 }
 
 mkdir -p app/src/main/assets/sprites
 cd app/src/main/assets/sprites
+rm ./*
 
 create_sprite 'Tiny Tic Tac Toe' 240
 create_sprite 'has won!'

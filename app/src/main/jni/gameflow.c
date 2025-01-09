@@ -131,9 +131,9 @@ init_game()
 	t_o_highlight = load_texture_from_raw_data(color_o_highlight, 1, 1);
 
 	// sprites
-	char filename[16];
+	char filename[14];
 	for (int i = 0; i < 10; i++) {
-		snprintf(filename, 16, "sprites/%d.png", i);
+		snprintf(filename, sizeof(filename), "sprites/%d.pgm", i);
 		t_digits[i] = load_texture(filename);
 		if (!t_digits[i].t)
 			return false;
@@ -145,16 +145,16 @@ init_game()
 	pixmap = create_o_pixmap(200, color_o);
 	t_o = load_texture_from_pixmap_and_free_data(pixmap);
 
-	t_tinytictactoe = load_texture("sprites/tiny_tic_tac_toe.png");
-	t_nextturn = load_texture("sprites/next_turn.png");
-	t_haswon = load_texture("sprites/has_won.png");
-	t_draw = load_texture("sprites/draw.png");
-	t_difficulty = load_texture("sprites/level.png");
-	t_levels[0] = load_texture("sprites/very_easy.png");
-	t_levels[1] = load_texture("sprites/easy.png");
-	t_levels[2] = load_texture("sprites/medium.png");
-	t_levels[3] = load_texture("sprites/hard.png");
-	t_levels[4] = load_texture("sprites/very_hard.png");
+	t_tinytictactoe = load_texture("sprites/tiny_tic_tac_toe.pgm");
+	t_nextturn = load_texture("sprites/next_turn.pgm");
+	t_haswon = load_texture("sprites/has_won.pgm");
+	t_draw = load_texture("sprites/draw.pgm");
+	t_difficulty = load_texture("sprites/level.pgm");
+	t_levels[0] = load_texture("sprites/very_easy.pgm");
+	t_levels[1] = load_texture("sprites/easy.pgm");
+	t_levels[2] = load_texture("sprites/medium.pgm");
+	t_levels[3] = load_texture("sprites/hard.pgm");
+	t_levels[4] = load_texture("sprites/very_hard.pgm");
 
 	load_statistics();
 

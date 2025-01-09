@@ -8,7 +8,7 @@ The classic tic-tac-toe game for Android and Linux/X11 written in C.
 
 ### It's tiny
 
-Its APK file is smaller than 80 kB. For comparison:
+Its APK file is smaller than 60 kB. For comparison:
 
 <img src="img/apk-size-comparison.png"
      alt="tic-tac-toe games APK size comparison" width="100%">
@@ -145,10 +145,6 @@ Contributions are welcome!
 Thanks to Vadim Boev for sharing
 [VadimBoev/FlappyBird](https://github.com/VadimBoev/FlappyBird). _Tiny Tic Tac
 Toe_ is very much inspired by it and re-uses some of its code.
-
-This app uses [elanthis/upng: very small PNG decoding
-library](https://github.com/elanthis/upng), including this patch: [Pull Request
-#10](https://github.com/elanthis/upng/pull/10).
 
 The tick sound used in this game is from [satrebor (Freesound) on
 Pixabay](https://pixabay.com/sound-effects/pick-92276/). I have reduced its

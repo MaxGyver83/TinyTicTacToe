@@ -22,6 +22,6 @@ bitmap_to_rgba(const unsigned char *src, int pixel_count)
 	unsigned char *dst = calloc(pixel_count * BYTES_PER_RGBA_PIXEL, 1);
 	for (int i = 0; i < pixel_count ; i++)
 		if (src[i]) // black foreground/text
-			dst[i * BYTES_PER_RGBA_PIXEL + 3] = 0xFF;
+			dst[i * BYTES_PER_RGBA_PIXEL + 3] = src[i];
 	return dst;
 }
