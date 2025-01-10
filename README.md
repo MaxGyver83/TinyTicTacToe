@@ -37,7 +37,7 @@ Not requesting permissions is something rarely seen in Android apps.
 
 Obviously, you have found the source code.
 
-# How to build
+## How to build
 
 First, clone this repository:
 
@@ -46,7 +46,7 @@ git clone https://github.com/MaxGyver83/TinyTicTacToe.git
 cd TinyTicTacToe
 ```
 
-## How to build for Linux/X11
+### How to build for Linux/X11
 
 Install these dependencies (Ubuntu 24.04 package names, might be different for
 other distributions):
@@ -64,7 +64,7 @@ Build and start _TinyTicTacToe_ like this:
 make x11
 ```
 
-## How to build for Android
+### How to build for Android
 
 Install [Android Studio](https://developer.android.com/studio/) or [Android's
 command line
@@ -105,7 +105,7 @@ Append `ABI=<arch>` to the command to build only for one specific architecture.
 
 Examples: `make ABI=arm64-v8a`, `make apk ABI=x86_64`
 
-## How to build for Google Play Store
+### How to build for Google Play Store
 
 First, install Google's [bundletool](https://github.com/google/bundletool).
 
