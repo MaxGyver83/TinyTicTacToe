@@ -7,6 +7,7 @@
 #endif
 #include <stdio.h>                    // for NULL
 #include "audio.h"                    // for create_audio_engine
+#include "font.h"
 #include "gameflow.h"                 // for init_game, render, shutdown_game
 #include "shaders.h"                  // for create_program
 #include "utils.h"                    // for info, error
@@ -155,6 +156,8 @@ init(EGLNativeDisplayType dpy, void *native_window)
 	// Set window size
 	update_window_size();
 
+	init_font();
+
 	if (!init_game()) {
 		error("Game not initialized!");
 		return;
@@ -220,6 +223,7 @@ shutdown_all()
 	ANativeWindow_release(g_app->window);
 
 	shutdown_game();
+	shutdown_font();
 	glDeleteProgram(texture_program);
 	glDeleteProgram(color_program);
 

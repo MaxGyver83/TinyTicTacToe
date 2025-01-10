@@ -5,6 +5,7 @@
 #include <string.h>                   // for memset
 #include <time.h>                     // for time
 #include "audio.h"                    // for destroy_audio_engine, destroy_a...
+#include "font.h"                     // for create_pix
 #include "gamelogic.h"                // for Line, Player, computer_move_ver...
 #include "graphics.h"                 // for render_texture, load_texture
 #include "init.h"                     // for win_width, win_height
@@ -131,12 +132,10 @@ init_game()
 	t_o_highlight = load_texture_from_raw_data(color_o_highlight, 1, 1);
 
 	// sprites
-	char filename[14];
+	char digit[2];
 	for (int i = 0; i < 10; i++) {
-		snprintf(filename, sizeof(filename), "sprites/%d.pgm", i);
-		t_digits[i] = load_texture(filename);
-		if (!t_digits[i].t)
-			return false;
+		snprintf(digit, 2, "%d", i);
+		t_digits[i] = create_texture_from_string(digit);
 	}
 
 	struct Pixmap pixmap = create_x_pixmap(100, color_x);
@@ -145,16 +144,16 @@ init_game()
 	pixmap = create_o_pixmap(200, color_o);
 	t_o = load_texture_from_pixmap_and_free_data(pixmap);
 
-	t_tinytictactoe = load_texture("sprites/tiny_tic_tac_toe.pgm");
-	t_nextturn = load_texture("sprites/next_turn.pgm");
-	t_haswon = load_texture("sprites/has_won.pgm");
-	t_draw = load_texture("sprites/draw.pgm");
-	t_difficulty = load_texture("sprites/level.pgm");
-	t_levels[0] = load_texture("sprites/very_easy.pgm");
-	t_levels[1] = load_texture("sprites/easy.pgm");
-	t_levels[2] = load_texture("sprites/medium.pgm");
-	t_levels[3] = load_texture("sprites/hard.pgm");
-	t_levels[4] = load_texture("sprites/very_hard.pgm");
+	t_tinytictactoe = create_texture_from_string("Tiny Tic Tac Toe");
+	t_nextturn = create_texture_from_string("Next turn:");
+	t_haswon = create_texture_from_string("has won!");
+	t_draw = create_texture_from_string("Draw");
+	t_difficulty = create_texture_from_string("Level:");
+	t_levels[0] = create_texture_from_string("Very easy");
+	t_levels[1] = create_texture_from_string("Easy");
+	t_levels[2] = create_texture_from_string("Medium");
+	t_levels[3] = create_texture_from_string("Hard");
+	t_levels[4] = create_texture_from_string("Very hard");
 
 	load_statistics();
 

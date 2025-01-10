@@ -14,5 +14,6 @@ struct Pixmap {
 
 unsigned char * rgb_to_rgba(const unsigned char *src, int pixel_count);
 unsigned char * bitmap_to_rgba(const unsigned char *src, int pixel_count);
+void pixmap_copy(struct Pixmap dst, struct Pixmap src, int x, int y);
 
 #endif // PIXMAP_H
