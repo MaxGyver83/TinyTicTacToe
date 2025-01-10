@@ -29,7 +29,9 @@
 # define WIN32_LEAN_AND_MEAN 1
 # include <windows.h>
 #else
-# define _POSIX_C_SOURCE 1
+# ifndef _POSIX_C_SOURCE
+#  define _POSIX_C_SOURCE 1
+# endif
 # include <fcntl.h>
 # include <sys/mman.h>
 # include <sys/stat.h>
@@ -125,7 +127,9 @@ struct SFT_Font
 
 /* function declarations */
 /* generic utility functions */
+#ifndef __USE_MISC
 static void *reallocarray(void *optr, size_t nmemb, size_t size);
+#endif
 static inline int fast_floor(double x);
 static inline int fast_ceil (double x);
 /* file loading */
@@ -406,6 +410,7 @@ failure:
  * if both s1 < MUL_NO_OVERFLOW and s2 < MUL_NO_OVERFLOW */
 #define MUL_NO_OVERFLOW	((size_t)1 << (sizeof(size_t) * 4))
 
+#ifndef __USE_MISC
 /* OpenBSD's reallocarray() standard libary function.
  * A wrapper for realloc() that takes two size args like calloc().
  * Useful because it eliminates common integer overflow bugs. */
@@ -419,6 +424,7 @@ reallocarray(void *optr, size_t nmemb, size_t size)
 	}
 	return realloc(optr, size * nmemb);
 }
+#endif
 
 /* TODO maybe we should use long here instead of int. */
 static inline int
