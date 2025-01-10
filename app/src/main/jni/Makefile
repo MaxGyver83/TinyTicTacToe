@@ -14,6 +14,9 @@ tinytictactoe: $(obj)
 	echo "$(src)"
 	$(CC) $^ -o $@ $(INC) $(CFLAGS) $(LDFLAGS)
 
+lib/schrift.o: lib/schrift.c
+	$(CC) -o $@ -c $^
+
 %.o: %.c Makefile
 	$(CC) $< -o $@ -c $(INC) $(CFLAGS)
 

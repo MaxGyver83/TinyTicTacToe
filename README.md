@@ -154,4 +154,8 @@ length and file size using this command:
 ffmpeg -ss 0.45 -t 0.15 -i pick-92276.mp3 -c:a libvorbis -q:a 4 pick.ogg
 ```
 
+This branch uses [libschrift](https://github.com/tomolt/libschrift) for font
+rendering. Its license is included in
+[app/src/main/jni/lib/schrift.c](app/src/main/jni/lib/schrift.c).
+
 Thank you all!
