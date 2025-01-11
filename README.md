@@ -131,6 +131,48 @@ Google Play Store:
 
 <https://play.google.com/store/apps/details?id=com.goodtemperapps.tinytictactoe>
 
+## Variations
+
+### Texts prerendered as 32-bit PNG images
+
+Originally, all texts used in this app were (32-bit RGBA) PNG image files
+created with [create_sprites.sh](create_sprites.sh) using `pango-view`. This is
+much simpler than creating texts at runtime. _Tiny Tic Tac Toe_ used
+[upng](https://github.com/elanthis/upng) for decoding the PNG files. Check out
+the `png32bit` tag for the original code.
+
+### Texts prerendered as 8-bit grayscale PNG images
+
+There is a branch named `png8bit` that uses 8-bit grayscale PNG files instead.
+This reduces the APK size(s) by 8 kB.
+
+### Texts prerendered as 8-bit grayscale PGM images
+
+But it turned out that 8-bit PGM files
+([Netpbm](https://en.wikipedia.org/wiki/Netpbm)) are a better choice. This file
+format is so simple that it can be decoded without any library. Netpbm files
+contain uncompressed data. But after compression these files are even smaller
+than 8-bit PNG files. The best part is that it's not necessary to compress these
+files with gzip or similar because APK files are compressed anyway. This also
+means that Android decompresses these files automatically when accessed in C
+code.
+
+### Texts rendered during runtime using libschrift
+
+Prerendering texts is simple but it doesn't scale well. If you want to create an
+app that uses much more text than this one, it might make sense to render all
+texts at runtime. Take a look at the `libschrift` branch which uses the
+[libschrift](https://github.com/tomolt/libschrift) library for text rendering.
+
+### Variations overview
+
+| Branch/Tag   | APK size arm64-v8a | APK size x86\_64| Assets                      | Libraries  |
+|--------------| ------------------:| ---------------:|-----------------------------|------------|
+| `png32bit`   | 74 kB              | 74 kB           | PNG files (RGBA)            | upng       |
+| `png8bit`    | 66 kB              | 66 kB           | PNG files (8-bit grayscale) | upng       |
+| `main`       | 58 kB              | 58 kB           | PGM files                   | -          |
+| `libschrift` | 53 kB              | 57 kB           | a minimized font            | libschrift |
+
 ## Contributing
 
 I'm sharing this project to help you to start your own project.
