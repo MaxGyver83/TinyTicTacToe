@@ -139,12 +139,12 @@ load_texture(const char *asset_path)
 	const unsigned char *upng_buf = upng_get_buffer(png);
 	/* printf("asset_path: %s, channels: %d\n", asset_path, upng_get_components(png)); */
 	unsigned char *rgba_buf = NULL;
-	int bytes_per_pixel = upng_get_bpp(png);
-	if (bytes_per_pixel == 3) {
+	int channels = upng_get_components(png);
+	if (channels == 3) {
 		// add alpha channel
 		printf("asset_path: %s, channels: %d\n", asset_path, upng_get_components(png));
 		rgba_buf = rgb_to_rgba(upng_buf, w * h);
-	} else if (bytes_per_pixel == 1) {
+	} else if (channels == 1) {
 		printf("asset_path: %s, channels: %d\n", asset_path, upng_get_components(png));
 		rgba_buf = bitmap_to_rgba(upng_buf, w * h);
 	} else {
@@ -153,7 +153,7 @@ load_texture(const char *asset_path)
 	Texture texture = load_texture_from_raw_data(rgba_buf, w, h);
 
 	upng_free(png);
-	if (bytes_per_pixel == 1 || bytes_per_pixel == 3)
+	if (channels == 1 || channels == 3)
 		free(rgba_buf);
 
 	AAsset_close(file);
