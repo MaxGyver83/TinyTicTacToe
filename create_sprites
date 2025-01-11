@@ -11,6 +11,8 @@ create_sprite() {
     margin="${3:-1}"
     filename="${4:-$(generate_filename "$text")}"
     pango-view --background=transparent --dpi=$dpi --margin=$margin -qo "$filename" <(echo "$text")
+    # extract the alpha channel
+    magick "$filename" -alpha extract -strip "$filename"
     echo "Created $filename"
 }
 
