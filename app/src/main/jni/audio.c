@@ -14,7 +14,8 @@
 #include "utils.h"                    // for debug, error, info
 
 #define MAX_PLAYERS 5
-#define MAX_USES 5
+#define MAX_USES 100
+#define SL_PLAYSTATE_UNKNOWN 999
 
 typedef struct {
 	SLObjectItf player_object;
@@ -22,10 +23,10 @@ typedef struct {
 	SLSeekItf player_seek;
 	int fd; // file descriptor
 	int uses;
+	char asset_path[256];
 } AudioPlayer;
 
-static const AudioPlayer no_player = { NULL, NULL, NULL, -1, 0 };
-static AudioPlayer players[MAX_PLAYERS] = { { NULL, NULL, NULL, -1, 0 } };
+static AudioPlayer players[MAX_PLAYERS] = { { NULL, NULL, NULL, -1, 0, { 0 } } };
 static SLObjectItf engine_object = NULL;
 static SLEngineItf engine_engine;
 static SLObjectItf output_mix_object = NULL;
@@ -34,24 +35,8 @@ static int current_player_index = 0;
 static void
 reset_player(AudioPlayer *player)
 {
-	memcpy(player, &no_player, sizeof(AudioPlayer));
-}
-
-static void
-destroy_unused_players()
-{
-	for (int i = 0; i < MAX_PLAYERS; ++i) {
-		if (players[i].player_play) {
-			SLuint32 state;
-			SLresult result = (*players[i].player_play)->GetPlayState(players[i].player_play, &state);
-			if (result == SL_RESULT_SUCCESS && state == SL_PLAYSTATE_STOPPED) {
-				info("Destroying unused player %d", i);
-				(*players[i].player_object)->Destroy(players[i].player_object);
-				close(players[i].fd);
-				reset_player(&players[i]);
-			}
-		}
-	}
+	memset(player, 0, sizeof(AudioPlayer));
+	player->fd = -1;
 }
 
 void
@@ -111,8 +96,6 @@ create_audio_player(AudioPlayer *player, const char *asset_path)
 	off_t start, length;
 	int fd = AAsset_openFileDescriptor(audio_asset, &start, &length);
 	AAsset_close(audio_asset);
-	/* run_cmd("/bin/pwd"); */
-	/* run_cmd("/bin/ls -lahF"); */
 	if (fd < 0) {
 		error("Failed to get file descriptor for asset: %s", asset_path);
 		return false;
@@ -163,8 +146,53 @@ create_audio_player(AudioPlayer *player, const char *asset_path)
 
 	player->fd = fd;
 	player->uses = 0;
+	strncpy(player->asset_path, asset_path, sizeof(player->asset_path));
 	debug("Successfully created audio player for asset: %s", asset_path);
 	return true;
+}
+
+static SLuint32
+get_play_state(SLPlayItf player_play)
+{
+	SLuint32 state;
+	SLresult result = (*player_play)->GetPlayState(player_play, &state);
+	if (result == SL_RESULT_SUCCESS)
+		return state;
+	error("Failed to get play state. result = %d", result);
+	return SL_PLAYSTATE_UNKNOWN;
+}
+
+static SLuint32
+stop_player(SLPlayItf player_play)
+{
+	SLresult result = (*player_play)->SetPlayState(player_play, SL_PLAYSTATE_STOPPED);
+	if (result == SL_RESULT_SUCCESS)
+		return get_play_state(player_play);
+	error("Failed to set play state. result = %d", result);
+	return SL_PLAYSTATE_UNKNOWN;
+}
+
+static int
+find_available_player(const char *asset_path)
+{
+	for (int i = 0; i < MAX_PLAYERS; ++i) {
+		if (players[i].player_play
+				&& strncmp(players[i].asset_path, asset_path, sizeof(players[i].asset_path)) == 0) {
+			SLuint32 state = get_play_state(players[i].player_play);
+			if (state == SL_PLAYSTATE_PAUSED) {
+				debug("Player %d is paused. Stopping it.", i);
+				state = stop_player(players[i].player_play);
+			}
+			if (state == SL_PLAYSTATE_STOPPED) {
+				debug("Reusing player %d for asset: %s", i, asset_path);
+				return i;
+			}
+			if (state == SL_PLAYSTATE_UNKNOWN)
+				return SL_PLAYSTATE_UNKNOWN;
+			debug("Player %d is not available.", i);
+		}
+	}
+	return -1;
 }
 
 void
@@ -172,23 +200,13 @@ play_audio(const char *asset_path)
 {
 	SLresult result;
 
-	destroy_unused_players();
-
 	// find an available player
 	SLPlayItf player_play = NULL;
-	int available_index = -1;
-	for (int i = 0; i < MAX_PLAYERS; ++i) {
-		if (players[i].player_play) {
-			SLuint32 state;
-			result = (*players[i].player_play)->GetPlayState(players[i].player_play, &state);
-			if (result == SL_RESULT_SUCCESS && state == SL_PLAYSTATE_STOPPED) {
-				player_play = players[i].player_play;
-				available_index = i;
-				debug("Reusing player %d for asset: %s", i, asset_path);
-				break;
-			}
-		}
-	}
+	int available_index = find_available_player(asset_path);
+	if (available_index == SL_PLAYSTATE_UNKNOWN)
+		return;
+	if (available_index >= 0)
+		player_play = players[available_index].player_play;
 
 	// if no available player, create a new one
 	if (!player_play) {
