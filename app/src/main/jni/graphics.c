@@ -20,7 +20,8 @@
 
 extern GLuint color_program;
 
-Texture no_texture = {0};
+static const Color buttoncolor = {0, 0, 0, 0.125f};
+static Texture no_texture = {0};
 
 struct Pixmap
 create_x_pixmap(int size, const Pixel pixel)
@@ -390,4 +391,23 @@ draw_rectangle_centered(const Color c, float thickness,
 {
 	draw_rectangle(c, thickness,
 			center_x - width/2, center_y - height/2, width, height);
+}
+
+void
+draw_button(float thickness, Rectangle r)
+{
+	draw_filled_rectangle(buttoncolor, r);
+
+	float left = r.x;
+	float right = r.x + r.w;
+	float top = r.y;
+	float bottom = r.y + r.h;
+	float t2 = thickness / 2.0f;
+	Color bright = {1.0f, 1.0f, 1.0f, 0.5f};
+	Color dark = {0.0f, 0.0f, 0.0f, 0.5f};
+
+	draw_line(bright, thickness, left - t2, top, right + t2, top);
+	draw_line(dark, thickness, left - t2, bottom, right + t2, bottom);
+	draw_line(bright, thickness, left, top, left, bottom);
+	draw_line(dark, thickness, right, top, right, bottom);
 }

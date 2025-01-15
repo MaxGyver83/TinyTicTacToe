@@ -31,7 +31,6 @@ static const Pixel color_x = {0xFF, 0x80, 0x00, 0xFF};
 static const Pixel color_o = {0x00, 0x00, 0xFF, 0xFF};
 static const Pixel color_x_highlight = {0xFF, 0x80, 0x00, 0x40};
 static const Pixel color_o_highlight = {0x00, 0x00, 0xFF, 0x40};
-static const Pixel buttoncolor = {0, 0, 0, 0x20};
 const Color bgcolor = {0.4f, 1.0f, 0.8f, 1.0f};
 
 static int stats[] = {0, 0, 0};
@@ -326,7 +325,7 @@ render_game_information(void)
 	b_settings = layout_row_end(row);
 	layout_row_render(row);
 	layout_row_free_all(row);
-	draw_filled_rectangle(pixel_to_color(buttoncolor), make_button(b_settings));
+	draw_button(line_height / 20.0f, make_button(b_settings));
 }
 
 void

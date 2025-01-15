@@ -51,5 +51,6 @@ Color pixel_to_color(const Pixel pixel);
 void draw_filled_rectangle(const Color c, Rectangle r);
 void draw_rectangle(const Color c, float thickness, float x, float y, float width, float height);
 void draw_rectangle_centered(const Color c, float thickness, float center_x, float center_y, float width, float height);
+void draw_button(float thickness, Rectangle r);
 
 #endif // TEXTURE_H
