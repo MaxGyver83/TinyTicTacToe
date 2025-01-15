@@ -319,8 +319,8 @@ render_game_information(void)
 	render_statistics(game_area.x + game_area.h, top);
 
 	// settings button
-	top += line_height * 2.0f;
-	LayoutRow *row = layout_row_begin(game_area.x, top, 0.0f, text_height, gap);
+	top += line_height * 2.0f - gap / 2.0f;
+	LayoutRow *row = layout_row_begin(game_area.x + gap, top, 0.0f, text_height, gap);
 	layout_row_add(row, t_difficulty, 0.0f, 0.0f);
 	layout_row_add(row, t_digits[difficulty], 0.0f, 0.0f);
 	b_settings = layout_row_end(row);
