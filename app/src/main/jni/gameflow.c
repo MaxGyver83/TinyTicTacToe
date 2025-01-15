@@ -63,13 +63,14 @@ static Texture
 create_grid(int size)
 {
 	int thickness = 5;
-	unsigned char *buf = malloc(size * size * BYTES_PER_RGBA_PIXEL);
-	memset(buf, 255, size * size * BYTES_PER_RGBA_PIXEL);
-	for (int i = 0; i < size; i++) {
-		for (int j = 0; j < size; j++) {
-			if (i % (size / 3) < thickness || i >= size - thickness
-					|| j % (size / 3) < thickness || j >= size - thickness) {
-				int pixel_index = i * size + j;
+	size_t bufsize = size * size * BYTES_PER_RGBA_PIXEL;
+	unsigned char *buf = malloc(bufsize);
+	memset(buf, 255, bufsize);
+	for (int row = 0; row < size; row++) {
+		for (int col = 0; col < size; col++) {
+			if (row % (size / 3) < thickness || row >= size - thickness
+					|| col % (size / 3) < thickness || col >= size - thickness) {
+				int pixel_index = row * size + col;
 				// black pixel {0, 0, 0}, alpha keeps default value of 255
 				memset(&buf[pixel_index * BYTES_PER_RGBA_PIXEL], 0, 3);
 			}
