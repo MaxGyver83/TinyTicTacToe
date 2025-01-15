@@ -452,9 +452,11 @@ update()
 		computer_move();
 		return true;
 	} else if (keyboard_field_selection >= 0) {
-		if (fields[keyboard_field_selection] == NONE) {
-			fields[keyboard_field_selection] = X;
-			move_done();
+		if (!show_settings) {
+			if (fields[keyboard_field_selection] == NONE) {
+				fields[keyboard_field_selection] = X;
+				move_done();
+			}
 		}
 		keyboard_field_selection = -1;
 		return true;
