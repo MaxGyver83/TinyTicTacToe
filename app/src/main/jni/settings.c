@@ -17,6 +17,7 @@ bool show_settings = false;
 Rectangle settings_window_rect = {0.0f, 0.0f, 1.0f, 1.0f};
 Rectangle b_difficulty[LEVEL_COUNT];
 
+static const Color shadowcolor = {0, 0, 0, 0.5f};
 static const Color bordercolor = {0, 0, 0, 1.0f};
 
 static bool initialized = false;
@@ -56,6 +57,7 @@ render_window()
 	if (!initialized)
 		initialize();
 
+	draw_filled_rectangle(shadowcolor, (Rectangle){.x=0, .y=0, .w=win_width, .h=win_height});
 	Rectangle r = settings_window_rect;
 	draw_filled_rectangle(bgcolor, r);
 	draw_rectangle(bordercolor, 5.0f, r.x, r.y, r.w, r.h);
