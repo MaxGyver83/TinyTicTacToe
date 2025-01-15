@@ -11,13 +11,13 @@ extern int difficulty;
 extern Texture t_difficulty;
 extern Texture t_levels[];
 extern Texture t_digits[10];
+extern const Color bgcolor;
 
 bool show_settings = false;
 Rectangle settings_window_rect = {0.0f, 0.0f, 1.0f, 1.0f};
 Rectangle b_difficulty[LEVEL_COUNT];
 
-static const Pixel bgcolor = {101, 252, 204, 255};
-static const Pixel bordercolor = {0, 0, 0, 255};
+static const Color bordercolor = {0, 0, 0, 1.0f};
 
 static bool initialized = false;
 static float center_x;
@@ -57,8 +57,8 @@ render_window()
 		initialize();
 
 	Rectangle r = settings_window_rect;
-	draw_filled_rectangle(pixel_to_color(bgcolor), r);
-	draw_rectangle(pixel_to_color(bordercolor), 5.0f, r.x, r.y, r.w, r.h);
+	draw_filled_rectangle(bgcolor, r);
+	draw_rectangle(bordercolor, 5.0f, r.x, r.y, r.w, r.h);
 
 	float padding = win_width * 0.05f;
 	float y = r.y + padding;

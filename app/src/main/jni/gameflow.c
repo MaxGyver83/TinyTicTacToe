@@ -32,6 +32,7 @@ static const Pixel color_o = {0x00, 0x00, 0xFF, 0xFF};
 static const Pixel color_x_highlight = {0xFF, 0x80, 0x00, 0x40};
 static const Pixel color_o_highlight = {0x00, 0x00, 0xFF, 0x40};
 static const Pixel buttoncolor = {0, 0, 0, 0x20};
+const Color bgcolor = {0.4f, 1.0f, 0.8f, 1.0f};
 
 static int stats[] = {0, 0, 0};
 static bool done = false;
@@ -353,8 +354,8 @@ update_geometry()
 void
 render()
 {
-	glViewport(0, 0, (int)win_width, (int)win_height);
-	glClearColor(101/255.0f, 252/255.0f, 204/255.0f, 1.0f);
+	glViewport(0, 0, win_width, win_height);
+	glClearColor(bgcolor.r, bgcolor.g, bgcolor.b, bgcolor.a);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	float text_width = game_area.w * 0.7f;
