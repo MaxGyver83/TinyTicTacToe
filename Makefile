@@ -16,24 +16,23 @@ x11_clean:
 
 keystore.jks:
 	./create_keystore.sh
-$(APK_FILE):
+$(APK_FILE): keystore.jks
 	./build_apk.sh $(ABI)
 $(AAB_FILE): keystore.jks 
 	./build_shared_library.sh all
 	./build_aab.sh
 
-apk: keystore.jks $(APK_FILE)
-install: $(APK_FILE)
+apk: $(APK_FILE)
+install: apk
 	adb install -r -d $(APK_FILE)
-run: $(APK_FILE)
+run: apk
 	./run.sh $(ABI)
 	./adblog.sh
 log:
 	./adblog.sh
 
 aab: $(AAB_FILE)
-
-run_aab: $(AAB_FILE)
+run_aab: aab
 	./install_run_aab.sh
 	./adblog.sh
 
