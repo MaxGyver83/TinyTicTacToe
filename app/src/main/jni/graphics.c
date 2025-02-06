@@ -142,7 +142,9 @@ load_texture_from_pgm(const char *filepath)
 	unsigned char *rgba_buf = bitmap_to_rgba(img, width * height);
 	free(buffer);
 
-	return load_texture_from_raw_data(rgba_buf, width, height);
+	Texture t = load_texture_from_raw_data(rgba_buf, width, height);
+	free(rgba_buf);
+	return t;
 
 parse_error:
 		error("Invalid PGM file");
