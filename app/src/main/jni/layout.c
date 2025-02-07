@@ -73,8 +73,7 @@ layout_row_render(LayoutRow *row)
 				x,
 				row->y,
 				widget->width,
-				widget->height,
-				ALIGN_TOP_LEFT);
+				widget->height);
 		x += r.w + row->spacing;
 		widget = widget->next;
 	};

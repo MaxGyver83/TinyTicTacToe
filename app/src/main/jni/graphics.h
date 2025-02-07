@@ -30,23 +30,24 @@ typedef struct {
 } Rectangle;
 
 typedef enum {
-	ALIGN_TOP_LEFT,
-	ALIGN_TOP_CENTER,
-	ALIGN_TOP_RIGHT,
-	ALIGN_CENTER_LEFT,
-	ALIGN_CENTER,
-	ALIGN_CENTER_RIGHT,
-	ALIGN_BOTTOM_LEFT,
-	ALIGN_BOTTOM_CENTER,
-	ALIGN_BOTTOM_RIGHT,
-} Alignment;
+	LEFT,
+	CENTER_H,
+	RIGHT,
+} HorizontalAnchor;
+
+typedef enum {
+	TOP,
+	CENTER_V,
+	BOTTOM,
+} VerticalAnchor;
 
 struct Pixmap create_x_pixmap(int size, const Pixel pixel);
 struct Pixmap create_o_pixmap(int size, const Pixel pixel);
 Texture load_texture(const char *asset_path);
 Texture load_texture_from_raw_data(const unsigned char *bitmap, int width, int height);
 Texture load_texture_from_pixmap_and_free_data(struct Pixmap pixmap);
-Rectangle render_texture(Texture texture, float x, float y, float width, float height, Alignment align);
+Rectangle render_texture(Texture texture, float x, float y, float width, float height);
+Rectangle render_texture_with_anchor(Texture texture, float x, float y, float width, float height, HorizontalAnchor anchor_h, VerticalAnchor anchor_v);
 Color pixel_to_color(const Pixel pixel);
 void draw_filled_rectangle(const Color c, Rectangle r);
 void draw_rectangle(const Color c, float thickness, float x, float y, float width, float height);

@@ -189,8 +189,7 @@ render_highlight(void)
 				game_area.x + line_index * box_size,
 				game_area.y,
 				box_size,
-				game_area.h,
-				ALIGN_TOP_LEFT);
+				game_area.h);
 		/* draw_filled_region(pixel_to_color(color), */
 		/*         game_area.x + line_index * box_size, */
 		/*         game_area.y, */
@@ -205,8 +204,7 @@ render_highlight(void)
 				game_area.x,
 				game_area.y + line_index * box_size,
 				game_area.w,
-				box_size,
-				ALIGN_TOP_LEFT);
+				box_size);
 		break;
 	case DESCENDING_DIAGONAL:
 	case ASCENDING_DIAGONAL:
@@ -217,8 +215,7 @@ render_highlight(void)
 					game_area.x + col * box_size,
 					game_area.y + i * box_size,
 					box_size,
-					box_size,
-					ALIGN_TOP_LEFT);
+					box_size);
 		}
 		break;
 	}
@@ -233,11 +230,12 @@ render_xs_and_os(void)
 			float margin = field_size * 0.05f;
 			int field = fields[row * 3 + col];
 			if (field)
-				render_texture(field == X ? t_x : t_o,
+				render_texture_with_anchor(field == X ? t_x : t_o,
 						game_area.x + col * field_size + field_size / 2.0f,
 						game_area.y + row * field_size + field_size / 2.0f,
 						field_size - 2 * margin,
-						field_size - 2 * margin, ALIGN_CENTER);
+						field_size - 2 * margin,
+						CENTER_H, CENTER_V);
 		}
 	}
 }
@@ -252,12 +250,12 @@ render_winner(void)
 	if (winner) {
 		float text_width = size + gap + (size * t_haswon.w / t_haswon.h);
 		float x = (win_width - text_width) / 2.0f;
-		render_texture(winner == X ? t_x : t_o, x, y, size, size, ALIGN_TOP_LEFT);
-		render_texture(t_haswon, x + size + gap, y, 0.0f, size, ALIGN_TOP_LEFT);
+		render_texture(winner == X ? t_x : t_o, x, y, size, size);
+		render_texture(t_haswon, x + size + gap, y, 0.0f, size);
 	} else {
 		// draw game
 		float x = win_width / 2.0f;
-		render_texture(t_draw, x, y, 0.0f, size, ALIGN_TOP_CENTER);
+		render_texture_with_anchor(t_draw, x, y, 0.0f, size, CENTER_H, TOP);
 	}
 }
 
@@ -280,13 +278,13 @@ render_statistics(float right, float top)
 	}
 	float left = right - max_width;
 	for (int i = 0; i < 3; i++) {
-		render_texture(*stats_textures[i], left, y, 0.0f, text_height, ALIGN_TOP_LEFT);
+		render_texture(*stats_textures[i], left, y, 0.0f, text_height);
 		int number = stats[i];
 		int x = right;
 		do {
 			int digit = number % 10;
 			number = number / 10;
-			Rectangle r = render_texture(t_digits[digit], x, y, 0.0f, text_height, ALIGN_TOP_RIGHT);
+			Rectangle r = render_texture(t_digits[digit], x, y, 0.0f, text_height);
 			x -= r.w;
 		} while (number > 0);
 		y += line_height;
@@ -310,9 +308,9 @@ render_game_information(void)
 	float top = game_area.y + game_area.h + padding;
 	gap = game_area.w * 0.015f;
 	// next turn
-	Rectangle r = render_texture(t_nextturn, left, top, 0.0f, text_height, ALIGN_TOP_LEFT);
+	Rectangle r = render_texture(t_nextturn, left, top, 0.0f, text_height);
 	left += r.w + gap;
-	render_texture(players_turn ? t_x : t_o, left, top, 0.0f, text_height, ALIGN_TOP_LEFT);
+	render_texture(players_turn ? t_x : t_o, left, top, 0.0f, text_height);
 
 	// statistics
 	render_statistics(game_area.x + game_area.h, top);
@@ -358,9 +356,9 @@ render()
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	float text_width = game_area.w * 0.7f;
-	render_texture(t_tinytictactoe, win_width / 2.0f, game_area.y / 2.0f, text_width, 0.0f, ALIGN_CENTER);
+	render_texture_with_anchor(t_tinytictactoe, win_width / 2.0f, game_area.y / 2.0f, text_width, 0.0f, CENTER_H, CENTER_V);
 
-	render_texture(t_grid, game_area.x, game_area.y, game_area.w, game_area.h, ALIGN_TOP_LEFT);
+	render_texture(t_grid, game_area.x, game_area.y, game_area.w, game_area.h);
 
 	if (done)
 		render_highlight();

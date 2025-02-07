@@ -264,7 +264,8 @@ render_texture_raw(GLuint texture, float x, float y, float width, float height)
 }
 
 Rectangle
-render_texture(Texture texture, float x, float y, float width, float height, Alignment align)
+render_texture_with_anchor(Texture texture, float x, float y, float width, float height,
+		HorizontalAnchor anchor_h, VerticalAnchor anchor_v)
 {
 	if (width < 1.0f && height < 1.0f)
 		return (Rectangle){0};
@@ -273,37 +274,25 @@ render_texture(Texture texture, float x, float y, float width, float height, Ali
 	if (height < 1.0f)
 		height = width * texture.h / texture.w;
 
-	switch (align) {
-		case ALIGN_CENTER:
-		case ALIGN_TOP_CENTER:
-		case ALIGN_BOTTOM_CENTER:
-			x -= width / 2.0f;
-			break;
-		case ALIGN_TOP_RIGHT:
-		case ALIGN_CENTER_RIGHT:
-		case ALIGN_BOTTOM_RIGHT:
-			x -= width;
-			break;
-		default:
-			break;
-	}
+	if (anchor_h == RIGHT)
+		x -= width;
+	else if (anchor_h == CENTER_H)
+		x -= width / 2.0f;
 
-	switch (align) {
-		case ALIGN_CENTER_LEFT:
-		case ALIGN_CENTER:
-		case ALIGN_CENTER_RIGHT:
-			y -= height / 2.0f;
-			break;
-		case ALIGN_BOTTOM_LEFT:
-		case ALIGN_BOTTOM_CENTER:
-		case ALIGN_BOTTOM_RIGHT:
-			y -= height;
-			break;
-		default:
-			break;
-	}
+	if (anchor_v == BOTTOM)
+		y -= height;
+	else if (anchor_v == CENTER_V)
+		y -= height / 2.0f;
+
 	render_texture_raw(texture.t, x, y, width, height);
 	return (Rectangle){x, y, width, height};
+
+}
+
+Rectangle
+render_texture(Texture texture, float x, float y, float width, float height)
+{
+	return render_texture_with_anchor(texture, x, y, width, height, LEFT, TOP);
 }
 
 Color

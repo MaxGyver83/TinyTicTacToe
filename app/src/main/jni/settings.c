@@ -64,14 +64,14 @@ render_window()
 
 	float padding = win_width * 0.05f;
 	float y = r.y + padding;
-	render_texture(t_difficulty, center_x, y, 0.0f, text_height_title, ALIGN_TOP_CENTER);
+	render_texture_with_anchor(t_difficulty, center_x, y, 0.0f, text_height_title, CENTER_H, TOP);
 	y += line_height_title;
 	float x = r.x + padding;
 	Rectangle level;
 	for (int i = 0; i < LEVEL_COUNT; i++) {
-		b_difficulty[i] = render_texture(t_digits[i+1], x, y, 0, text_height, ALIGN_TOP_LEFT);
+		b_difficulty[i] = render_texture(t_digits[i+1], x, y, 0, text_height);
 		level = render_texture(t_levels[i], x + b_difficulty[i].w + padding, y,
-				0, text_height, ALIGN_TOP_LEFT);
+				0, text_height);
 		y += line_height;
 	}
 	for (int i = 0; i < LEVEL_COUNT; i++)
