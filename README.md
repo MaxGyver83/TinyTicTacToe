@@ -105,6 +105,8 @@ Append `ABI=<arch>` to the command to build only for one specific architecture.
 
 Examples: `make ABI=arm64-v8a`, `make apk ABI=x86_64`
 
+Use `DEBUG=1 make apk` for a debug build (no symbols stripped).
+
 ### How to build for Google Play Store
 
 First, install Google's [bundletool](https://github.com/google/bundletool).

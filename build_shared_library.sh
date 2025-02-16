@@ -34,7 +34,9 @@ for arch in $ABI; do
 done
 
 echo Building native code for $ABI...
-$ANDROID_NDK_ROOT/ndk-build --directory=app/src/main APP_ABI="$ABI"
+# ndk-build creates unstripped libs in app/src/main/obj/local/$ABI
+# and stripped libs in libs/$ABI (for DEBUG=1 these remain unstripped)
+$ANDROID_NDK_ROOT/ndk-build ${DEBUG:+NDK_DEBUG=1} --directory=app/src/main APP_ABI="$ABI"
 ret_code=$?
 if [ $ret_code != 0 ]; then
     echo Error building native code!
@@ -44,18 +46,3 @@ fi
 
 echo "Libraries created in app/src/main/libs"
 tree --noreport app/src/main/libs
-
-
-# echo Copy files from libs to a temporary folder
-# mkdir -p lib
-# cp -R app/src/main/libs/* lib/
-
-# echo Delete temporary folder
-# remove lib
-
-# result:
-# 54K Dec 29 23:14 ./lib/arm64-v8a/libtinytictactoe.so
-# 54K Dec 31 11:22 ./build/lib/arm64-v8a/libtinytictactoe.so
-# 54K Dec 29 23:14 ./app/src/main/libs/arm64-v8a/libtinytictactoe.so
-# 54K Dec 29 23:14 ./app/src/main/obj/local/arm64-v8a/libtinytictactoe.so
-# 3 idential, the 4th one differs
