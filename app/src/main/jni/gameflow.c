@@ -265,7 +265,9 @@ render_statistics(float right, float top)
 	float y = top;
 	float max_width = 0.0f;
 	for (int i = 0; i < 3; i++) {
-		float width = i ? text_height : text_height * stats_textures[i]->w / stats_textures[i]->h;
+		// i == 0: Calculate width of "Draw"
+		// i >= 1: width = text_height (square X or O texture)
+		float width = (i == 0) ? text_height * t_draw.w / t_draw.h : text_height;
 		int number = stats[i];
 		do {
 			int digit = number % 10;
@@ -284,7 +286,7 @@ render_statistics(float right, float top)
 		do {
 			int digit = number % 10;
 			number = number / 10;
-			Rectangle r = render_texture(t_digits[digit], x, y, 0.0f, text_height);
+			Rectangle r = render_texture_with_anchor(t_digits[digit], x, y, 0.0f, text_height, RIGHT, TOP);
 			x -= r.w;
 		} while (number > 0);
 		y += line_height;
@@ -313,7 +315,7 @@ render_game_information(void)
 	render_texture(players_turn ? t_x : t_o, left, top, 0.0f, text_height);
 
 	// statistics
-	render_statistics(game_area.x + game_area.h, top);
+	render_statistics(game_area.x + game_area.w, top);
 
 	// settings button
 	top += line_height * 2.0f - gap / 2.0f;
