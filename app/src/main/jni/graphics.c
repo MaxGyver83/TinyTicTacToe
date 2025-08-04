@@ -22,7 +22,7 @@ extern GLuint color_program;
 extern float gap;
 
 static const Color buttoncolor = {0.0f, 0.0f, 1.0f, 0.25f};
-static const Color buttoncolor_highlighted = {1.0f, 0.5f, 0.0f, 0.6f};
+static const Color buttoncolor_highlighted = {1.0f, 0.5f, 0.0f, 0.75f};
 static Texture no_texture = {0};
 
 struct Pixmap
