@@ -91,18 +91,20 @@ create_o_pixmap(int size, const Pixel pixel)
 }
 
 static char*
-read_pgm_asset(const char *filepath)
+read_sprite_file(const char *filepath)
 {
-#ifdef X11
-	// prepend ../assets/
 	char adapted_path[256];
-	snprintf(adapted_path, sizeof(adapted_path), "../assets/%s", filepath);
+#ifdef X11
+	// prepend ../assets/sprites/
+	snprintf(adapted_path, sizeof(adapted_path), "../assets/sprites/%s", filepath);
 	return read_file_to_buffer(adapted_path);
 #else
+	// prepend sprites/
+	snprintf(adapted_path, sizeof(adapted_path), "sprites/%s", filepath);
 	AAsset *file;
-	file = AAssetManager_open(g_app->activity->assetManager, filepath, AASSET_MODE_BUFFER);
+	file = AAssetManager_open(g_app->activity->assetManager, adapted_path, AASSET_MODE_BUFFER);
 	if (!file) {
-		error("Failed to open asset file: %s", filepath);
+		error("Failed to open asset file: %s", adapted_path);
 		return NULL;
 	}
 	return (char*)AAsset_getBuffer(file);
@@ -112,7 +114,7 @@ read_pgm_asset(const char *filepath)
 static Texture
 load_texture_from_pgm(const char *filepath)
 {
-	char *buffer = read_pgm_asset(filepath);
+	char *buffer = read_sprite_file(filepath);
 	if (!buffer)
 		return no_texture;
 	char *line;
