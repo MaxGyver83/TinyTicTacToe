@@ -61,7 +61,7 @@ static Texture *stats_textures[3] = {&t_draw, &t_x, &t_o};
 static Texture
 create_grid(int size)
 {
-	int thickness = 5;
+	int thickness = win_height / 200;
 	size_t bufsize = size * size * BYTES_PER_RGBA_PIXEL;
 	unsigned char *buf = malloc(bufsize);
 	memset(buf, 255, bufsize);
