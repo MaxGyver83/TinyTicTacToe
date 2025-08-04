@@ -68,7 +68,8 @@ render_window()
 	draw_filled_rectangle(shadowcolor, (Rectangle){.x=0, .y=0, .w=win_width, .h=win_height});
 	Rectangle r = settings_window_rect;
 	draw_filled_rectangle(bgcolor, r);
-	draw_rectangle(bordercolor, 5.0f, r.x, r.y, r.w, r.h);
+	float line_width = win_height / 200.0f;
+	draw_rectangle(bordercolor, line_width, r.x, r.y, r.w, r.h);
 
 	float padding = win_width * 0.05f;
 	float y = r.y + padding;
