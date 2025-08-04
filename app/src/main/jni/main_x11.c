@@ -9,6 +9,7 @@
 #include <inttypes.h>         // for int64_t
 #include <stdbool.h>          // for true, bool, false
 #include <stdio.h>            // for printf, NULL
+#include <string.h>           // for strlen
 #include <unistd.h>           // for usleep
 #include "init.h"             // for main_loop_step, init, shutdown_all, g_i...
 #include "mouse.h"            // for mouse, mouse_init, mouse_reset
@@ -35,6 +36,26 @@ int scr;
 Visual *vis;
 Window root, win;
 
+
+static void
+set_wm_class(const char *res_name, const char *res_class)
+{
+	XClassHint *classHint = XAllocClassHint();
+	classHint->res_name = (char *)res_name;  // Usually argv[0]
+	classHint->res_class = (char *)res_class; // Application name
+	XSetClassHint(dpy, win, classHint);
+	XFree(classHint);
+}
+
+static void
+set_net_wm_name(const char *title)
+{
+	Atom netWmName = XInternAtom(dpy, "_NET_WM_NAME", False);
+	Atom utf8String = XInternAtom(dpy, "UTF8_STRING", False);
+	XChangeProperty(dpy, win, netWmName, utf8String, 8, PropModeReplace,
+			(unsigned char *)title, strlen(title));
+	XFlush(dpy);
+}
 
 static bool
 process_input(void)
@@ -145,7 +166,10 @@ main(void)
 	};
 	XSetSizeHints(dpy, win, &xsh, XA_WM_NORMAL_HINTS);
 
-	XStoreName(dpy, win, "Tiny Tic Tac Toe");
+	char *title = "Tiny Tic Tac Toe";
+	XStoreName(dpy, win, title);
+	set_wm_class("tinytictactoe", title);
+	set_net_wm_name(title);
 	XMapWindow(dpy, win);
 	XMapSubwindows(dpy, win);
 
