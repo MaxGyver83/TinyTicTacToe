@@ -441,9 +441,10 @@ bool
 update()
 {
 	if (done) {
-		if (mouse.is_down) {
+		if (mouse.is_down || keyboard_field_selection >= 0) {
 			reset_game();
 			mouse.is_down = false;
+			keyboard_field_selection = -1;
 			return true;
 		}
 		return false;
@@ -474,11 +475,32 @@ update()
 					return true;
 				}
 			}
+		} else if (keyboard_field_selection >= 0) {
+			if (keyboard_field_selection == 0) {
+				show_settings = false;
+			} else if (keyboard_field_selection <= 5) {
+				difficulty = keyboard_field_selection;
+				save_statistics();
+				delay = 3;
+			}
+			keyboard_field_selection = -1;
+			return true;
 		}
 	} else if (keyboard_field_selection >= 0) {
-		if (fields[keyboard_field_selection] == NONE) {
-			fields[keyboard_field_selection] = X;
-			move_done();
+		if (keyboard_field_selection == 0) {
+			show_settings = true;
+		} else { // 1-9
+			// 7/8/9 is top row (like on a numpad):
+			// Swap 1/2/3 with 7/8/9
+			if (keyboard_field_selection <= 3)
+				keyboard_field_selection += 6;
+			else if (keyboard_field_selection >= 7)
+				keyboard_field_selection -= 6;
+			int index = keyboard_field_selection - 1;  // zero-indexed
+			if (fields[index] == NONE) {
+				fields[index] = X;
+				move_done();
+			}
 		}
 		keyboard_field_selection = -1;
 		return true;

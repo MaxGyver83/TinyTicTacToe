@@ -98,18 +98,9 @@ process_input(void)
 
 			case KeyPress:
 				key = XkbKeycodeToKeysym(dpy, ev.xkey.keycode, 0, 0);
-				if (key >= XK_1 && key <= XK_9) {
-					if (keyboard_field_selection < 0) {
-						int number = key - XK_1 + 1; // 1 to 9
-						// 7/8/9 is top row (like on a numpad):
-						// Swap 1/2/3 with 7/8/9
-						if (number <= 3)
-							number += 6;
-						else if (number >= 7)
-							number -= 6;
-						// int fields[] in gameflow.c is 0-indexed
-						keyboard_field_selection = number - 1;
-					}
+				if (key >= XK_0 && key <= XK_9) {
+					if (keyboard_field_selection < 0)
+						keyboard_field_selection = key - XK_0; // 0-9
 				} else if (key == XK_space || key == XK_n) {
 					// Simulate click (in the corner of the window)
 					// to start a new game
