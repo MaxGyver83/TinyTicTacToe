@@ -18,11 +18,8 @@ tinytictactoe: $(obj)
 	$(CC) $< -o $@ -c $(INC) $(CFLAGS)
 
 run: tinytictactoe
-	if command -v unbuffer > /dev/null 2>&1; then \
-		unbuffer ./tinytictactoe; \
-	else \
-		./tinytictactoe; \
-	fi
+	command -v unbuffer > /dev/null 2>&1 && UNBUFFER=unbuffer; \
+	$$UNBUFFER ./tinytictactoe
 
 tags:
 	ctags_for_includes --skip-gcc -I $(ANDROID_NDK_ROOT)/toolchains/llvm/prebuilt/linux-x86_64,/usr/include .
