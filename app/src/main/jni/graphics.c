@@ -19,8 +19,10 @@
 #define SQR(x) ((x) * (x))
 
 extern GLuint color_program;
+extern float gap;
 
-static const Color buttoncolor = {0, 0, 0, 0.125f};
+static const Color buttoncolor = {0.0f, 0.0f, 1.0f, 0.25f};
+static const Color buttoncolor_highlighted = {1.0f, 0.5f, 0.0f, 0.6f};
 static Texture no_texture = {0};
 
 struct Pixmap
@@ -376,18 +378,10 @@ draw_rectangle(const Color color, float thickness,
 	draw_line(color, thickness, right, top, right, bottom);
 }
 
-void
-draw_rectangle_centered(const Color c, float thickness,
-		float center_x, float center_y, float width, float height)
+static void
+draw_color_button(float thickness, Rectangle r, Color color)
 {
-	draw_rectangle(c, thickness,
-			center_x - width/2, center_y - height/2, width, height);
-}
-
-void
-draw_button(float thickness, Rectangle r)
-{
-	draw_filled_rectangle(buttoncolor, r);
+	draw_filled_rectangle(color, r);
 
 	float left = r.x;
 	float right = r.x + r.w;
@@ -401,4 +395,16 @@ draw_button(float thickness, Rectangle r)
 	draw_line(dark, thickness, left - t2, bottom, right + t2, bottom);
 	draw_line(bright, thickness, left, top, left, bottom);
 	draw_line(dark, thickness, right, top, right, bottom);
+}
+
+void
+draw_button(float thickness, Rectangle r)
+{
+	draw_color_button(thickness, r, buttoncolor);
+}
+
+void
+draw_highlighted_button(float thickness, Rectangle r)
+{
+	draw_color_button(thickness, r, buttoncolor_highlighted);
 }

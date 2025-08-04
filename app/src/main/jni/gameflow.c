@@ -26,6 +26,7 @@ extern Rectangle b_difficulty[LEVEL_COUNT];
 
 int difficulty = 1;
 int keyboard_field_selection = -1;
+float gap; // space between words
 
 static const Pixel color_x = {0xFF, 0x80, 0x00, 0xFF};
 static const Pixel color_o = {0x00, 0x00, 0xFF, 0xFF};
@@ -38,7 +39,6 @@ static bool done = false;
 static bool players_turn;
 static float text_height;
 static float line_height; // space between two baselines
-static float gap; // space between words
 static float padding;
 static Rectangle game_area;
 static Rectangle b_settings;

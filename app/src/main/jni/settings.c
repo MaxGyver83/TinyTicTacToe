@@ -12,6 +12,7 @@ extern Texture t_difficulty;
 extern Texture t_levels[];
 extern Texture t_digits[10];
 extern const Color bgcolor;
+extern float gap;
 
 bool show_settings = false;
 Rectangle settings_window_rect = {0.0f, 0.0f, 1.0f, 1.0f};
@@ -27,6 +28,8 @@ static float settings_window_height;
 static float text_height_title;
 static float line_height_title;
 static float text_height;
+static float button_height;
+static float button_width;
 static float line_height;
 
 
@@ -38,12 +41,17 @@ initialize(void)
 	line_height_title = text_height_title * 1.2f;
 	settings_window_height = padding * 2 + line_height_title;
 	text_height = win_width * 0.06f;
-	line_height = text_height * 1.2f;
+	button_height = text_height * 1.2f;
+	line_height = button_height * 1.2f;
+	button_width = text_height * t_digits[LEVEL_COUNT].w / t_digits[LEVEL_COUNT].h
+		+ padding / 2 + text_height * t_levels[LEVEL_COUNT-1].w / t_levels[LEVEL_COUNT-1].h
+		+ 2 * gap;
+	float settings_window_width = button_width + 2 * padding;
 	settings_window_height += text_height + (LEVEL_COUNT - 1) * line_height;
 	settings_window_rect = (Rectangle){
-		.x = win_width * 0.25f,
+		.x = (win_width - settings_window_width) / 2,
 			.y = (win_height - settings_window_height) / 2,
-			.w = win_width * 0.5f,
+			.w = settings_window_width,
 			.h = settings_window_height,
 	};
 	center_x = win_width / 2.0f;
@@ -67,23 +75,20 @@ render_window()
 	render_texture_with_anchor(t_difficulty, center_x, y, 0.0f, text_height_title, CENTER_H, TOP);
 	y += line_height_title;
 	float x = r.x + padding;
-	Rectangle level;
+	float x_text = x + gap;
 	for (int i = 0; i < LEVEL_COUNT; i++) {
-		b_difficulty[i] = render_texture(t_digits[i+1], x, y, 0, text_height);
-		level = render_texture(t_levels[i], x + b_difficulty[i].w + padding, y,
+		// draw button frame and background
+		b_difficulty[i] = (Rectangle){x, y, button_width, button_height};
+		if (i + 1 == difficulty)
+			draw_highlighted_button(button_height / 20.0f, b_difficulty[i]);
+		else
+			draw_button(button_height / 20.0f, b_difficulty[i]);
+
+		// draw button text
+		float y_text = y + gap / 2;
+		Rectangle digit = render_texture(t_digits[i+1], x_text, y_text, 0, text_height);
+		render_texture(t_levels[i], x_text + digit.w + padding / 2, y_text,
 				0, text_height);
 		y += line_height;
 	}
-	for (int i = 0; i < LEVEL_COUNT; i++)
-		b_difficulty[i].w += padding + level.w; // width of "very hard" label
-
-	Rectangle b = b_difficulty[difficulty-1];
-	draw_rectangle_centered(
-		(Color){.r=0.0f, .g=0.0f, .b=1.0f, .a=1.0f},
-		5.0f,
-		b.x + b.w / 2,
-		b.y + b.h / 2,
-		b.w + padding,
-		line_height
-	);
 }
