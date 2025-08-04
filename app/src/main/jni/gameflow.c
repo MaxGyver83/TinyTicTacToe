@@ -449,34 +449,42 @@ update()
 		sleep_milliseconds(random_int(100, 400));
 		computer_move();
 		return true;
-	} else if (keyboard_field_selection >= 0) {
-		if (!show_settings) {
-			if (fields[keyboard_field_selection] == NONE) {
-				fields[keyboard_field_selection] = X;
-				move_done();
+	} else if (show_settings) {
+		static int delay = 0; // in frames
+		if (delay) {
+			delay--;
+			if (delay == 0) {
+				show_settings = false;
 			}
+			return true;
+		} else if (mouse.is_down) {
+			mouse.is_down = false;
+			if (!is_mouse_in_rectangle(settings_window_rect)) {
+				show_settings = false;
+				return true;
+			} else for (int i = 0; i < LEVEL_COUNT; i++) {
+				if (is_mouse_in_rectangle(b_difficulty[i])) {
+					difficulty = i + 1;
+					save_statistics();
+					delay = 3;
+					return true;
+				}
+			}
+		}
+	} else if (keyboard_field_selection >= 0) {
+		if (fields[keyboard_field_selection] == NONE) {
+			fields[keyboard_field_selection] = X;
+			move_done();
 		}
 		keyboard_field_selection = -1;
 		return true;
 	} else if (mouse.is_down) {
-		mouse.is_down = false;
-		if (show_settings) {
-			if (!is_mouse_in_rectangle(settings_window_rect)) {
-				show_settings = false;
-			} else for (int i = 0; i < LEVEL_COUNT; i++) {
-				if (is_mouse_in_rectangle(b_difficulty[i])) {
-					difficulty = i + 1;
-					show_settings = false;
-					save_statistics();
-				}
-			}
-		} else {
-			if (is_mouse_in_rectangle(game_area)) {
-				player_move();
-			} else if (is_mouse_in_rectangle(b_settings)) {
-				show_settings = true;
-			}
+		if (is_mouse_in_rectangle(game_area)) {
+			player_move();
+		} else if (is_mouse_in_rectangle(b_settings)) {
+			show_settings = true;
 		}
+		mouse.is_down = false;
 		return true;
 	}
 	return false;
