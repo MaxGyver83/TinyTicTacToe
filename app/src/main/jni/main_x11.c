@@ -9,11 +9,14 @@
 #include <inttypes.h>         // for int64_t
 #include <stdbool.h>          // for true, bool, false
 #include <stdio.h>            // for printf, NULL
+#include <stdlib.h>           // for atoi
 #include <string.h>           // for strlen
 #include <unistd.h>           // for usleep
+#include "gamelogic.h"        // for LEVEL_COUNT
 #include "init.h"             // for main_loop_step, init, shutdown_all, g_i...
 #include "mouse.h"            // for mouse, mouse_init, mouse_reset
 #include "utils.h"            // for get_timestamp
+#include "utils_x11.h"        // for streq
 
 #define TARGET_FPS 20
 #define TARGET_FRAME_TIME (1.0f / TARGET_FPS)
@@ -35,7 +38,18 @@ Display *dpy;
 int scr;
 Visual *vis;
 Window root, win;
+int start_level = 0; // 0 = read from stats.txt
 
+static int height = HEIGHT;
+static int width = WIDTH;
+
+static void
+usage(int exit_code)
+{
+	printf("usage: tinytictactoe [-h] [--full-hd] [--qHD] "
+	       "[--height WIN_HEIGHT] [-l LEVEL]\n");
+	exit(exit_code);
+}
 
 static void
 set_wm_class(const char *res_name, const char *res_class)
@@ -99,8 +113,8 @@ process_input(void)
 				} else if (key == XK_space || key == XK_n) {
 					// Simulate click (in the corner of the window)
 					// to start a new game
-					mouse.x = 0.01f * WIDTH;
-					mouse.y = 0.01f * HEIGHT;
+					mouse.x = 0.01f * width;
+					mouse.y = 0.01f * height;
 					mouse.is_down = true;
 				} else if (key == XK_Escape || key == XK_q) {
 					// quit
@@ -111,8 +125,8 @@ process_input(void)
 			case KeyRelease:
 				key = XkbKeycodeToKeysym(dpy, ev.xkey.keycode, 0, 0);
 				if (key == XK_space || key == XK_p) {
-					mouse.x = 0.27f * WIDTH;
-					mouse.y = 0.68f * HEIGHT;
+					mouse.x = 0.27f * width;
+					mouse.y = 0.68f * height;
 					mouse.is_released = true;
 				}
 				break;
@@ -142,8 +156,39 @@ game_loop(void)
 }
 
 int
-main(void)
+main(int argc, char *argv[])
 {
+	for (int i = 1; i < argc; i++) {
+		if (streq(argv[i], "-h")) {
+			usage(0);
+		} else if (streq(argv[i], "--full-hd")) {
+			height = 1920;
+			width = 1080;
+		} else if (streq(argv[i], "--qHD")) {
+			height = 960;
+			width = 540;
+		} else if (streq(argv[i], "-l")) {
+			i++;
+			if (i >= argc)
+				usage(1);
+			start_level = atoi(argv[i]);
+			debug("LEVEL = %d", start_level);
+			if (start_level < 1 || start_level > LEVEL_COUNT) {
+				error("LEVEL must be between 1 and %i!", LEVEL_COUNT);
+				exit(1);
+			}
+		} else if (streq(argv[i], "--height")) {
+			i++;
+			if (i >= argc)
+				usage(1);
+			height = atoi(argv[i]);
+			width = height / ASPECT_RATIO;
+		} else {
+			error("Unknown argument: %s", argv[i]);
+			usage(1);
+		}
+	}
+
 	mouse_init(&mouse);
 
 	if (!(dpy = XOpenDisplay(NULL)))
@@ -157,7 +202,7 @@ main(void)
 			Button1MotionMask | ButtonPressMask | ButtonReleaseMask
 			| KeyPressMask| KeyReleaseMask | StructureNotifyMask,
 	};
-	win = XCreateWindow(dpy, root, POSX, POSY, WIDTH, HEIGHT, 3,
+	win = XCreateWindow(dpy, root, POSX, POSY, width, height, 3,
 			DefaultDepth(dpy, scr), InputOutput, vis,
 			CWBackPixel | CWEventMask | CWBorderPixel, &xwa);
 

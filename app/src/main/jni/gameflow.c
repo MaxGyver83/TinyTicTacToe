@@ -13,10 +13,9 @@
 #include "settings.h"                 // for render_window
 #include "utils.h"                    // for error, info, random_int, sleep_...
 
-#define LEVEL_COUNT 5
-
 // variables
 extern char stats_filepath[256];
+extern int start_level;
 extern bool show_settings;
 extern int winning_line;
 extern int winner;
@@ -158,6 +157,9 @@ init_game()
 	t_levels[4] = load_texture("sprites/very_hard.pgm");
 
 	load_statistics();
+
+	if (start_level) // = optional command line argument in X11 build
+		difficulty = start_level;
 
 	return true;
 }

@@ -1,7 +1,14 @@
 #include "utils_x11.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "utils.h"
+
+bool
+streq(char *str, char *other)
+{
+	return *str == *other && strcmp(str, other) == 0;
+}
 
 char *
 read_file_to_buffer(const char *filename)

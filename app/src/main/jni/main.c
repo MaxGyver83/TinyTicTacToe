@@ -14,6 +14,7 @@
 #define TARGET_FPS 20
 #define TARGET_FRAME_TIME (1.0f / TARGET_FPS)
 
+int start_level = 0; // 0 = read from stats.txt
 
 static const char *
 get_app_cmd_string(int32_t cmd)

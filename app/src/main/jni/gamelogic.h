@@ -1,5 +1,6 @@
 #include <stdbool.h>
 
+#define LEVEL_COUNT 5
 #define FIELD_COUNT 9
 
 enum Player {NONE, X, O};  // NONE: empty field or draw game
