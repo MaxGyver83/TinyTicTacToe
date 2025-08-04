@@ -55,7 +55,8 @@ static Texture t_x_highlight;
 static Texture t_o_highlight;
 static Texture t_grid;
 static Texture t_nextturn;
-static Texture t_haswon;
+static Texture t_youhavewon;
+static Texture t_youhavelost;
 static Texture t_draw;
 static Texture *stats_textures[3] = {&t_draw, &t_x, &t_o};
 
@@ -147,7 +148,8 @@ init_game()
 	t_o = load_texture_from_pixmap_and_free_data(pixmap);
 
 	t_nextturn = load_texture("next_turn.pgm");
-	t_haswon = load_texture("has_won.pgm");
+	t_youhavewon = load_texture("you_have_won.pgm");
+	t_youhavelost = load_texture("you_have_lost.pgm");
 	t_draw = load_texture("draw.pgm");
 	t_difficulty = load_texture("level.pgm");
 	t_levels[0] = load_texture("very_easy.pgm");
@@ -253,18 +255,10 @@ static void
 render_winner(void)
 {
 	float size = game_area.w / 8.0f;
-	float y = game_area.y + game_area.h;
-	y = (win_height + y - size) / 2.0f;
-	if (winner) {
-		float text_width = size + gap + (size * t_haswon.w / t_haswon.h);
-		float x = (win_width - text_width) / 2.0f;
-		render_texture(winner == X ? t_x : t_o, x, y, size, size);
-		render_texture(t_haswon, x + size + gap, y, 0.0f, size);
-	} else {
-		// draw game
-		float x = win_width / 2.0f;
-		render_texture_with_anchor(t_draw, x, y, 0.0f, size, CENTER_H, TOP);
-	}
+	float x = win_width / 2.0f;
+	float y = (win_height + game_area.y + game_area.h) / 2.0f;
+	Texture t = (winner == X) ? t_youhavewon : (winner == O) ? t_youhavelost : t_draw;
+	render_texture_with_anchor(t, x, y, 0.0f, size, CENTER_H, CENTER_V);
 }
 
 static Rectangle
@@ -550,7 +544,8 @@ shutdown_game()
 	glDeleteTextures(1, &t_x_highlight.t);
 	glDeleteTextures(1, &t_o_highlight.t);
 	glDeleteTextures(1, &t_nextturn.t);
-	glDeleteTextures(1, &t_haswon.t);
+	glDeleteTextures(1, &t_youhavewon.t);
+	glDeleteTextures(1, &t_youhavelost.t);
 	glDeleteTextures(1, &t_draw.t);
 	glDeleteTextures(1, &t_difficulty.t);
 }

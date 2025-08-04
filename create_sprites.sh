@@ -19,7 +19,8 @@ mkdir -p app/src/main/assets/sprites
 cd app/src/main/assets/sprites
 rm ./*
 
-create_sprite 'has won!'
+create_sprite 'You have won!'
+create_sprite 'You have lost!'
 create_sprite 'Draw'
 create_sprite 'Next turn:'
 create_sprite 'Level:' 240
