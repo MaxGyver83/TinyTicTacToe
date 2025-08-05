@@ -269,6 +269,22 @@ render_winner(void)
 	}
 }
 
+static Rectangle
+enlarge(Rectangle r, float padding_h, float padding_v)
+{
+	r.x -= padding_h;
+	r.w += 2 * padding_h;
+	r.y -= padding_v;
+	r.h += 2 * padding_v;
+	return r;
+}
+
+static Rectangle
+make_button(Rectangle r)
+{
+	return enlarge(r, padding_button_h, padding_button_v);
+}
+
 static void
 render_statistics(float right, float top)
 {
@@ -304,16 +320,6 @@ render_statistics(float right, float top)
 	}
 }
 
-static Rectangle
-make_button(Rectangle r)
-{
-	r.w += 2 * padding_button_h;
-	r.x -= padding_button_h;
-	r.h += 2 * padding_button_v;
-	r.y -= padding_button_v;
-	return r;
-}
-
 static void
 render_game_information(void)
 {
@@ -321,7 +327,14 @@ render_game_information(void)
 	float top = game_area.y + game_area.h + padding;
 	// next turn
 	Rectangle r = render_texture(t_nextturn, left, top, 0.0f, text_height);
-	left += r.w + gap;
+	left += r.w + gap + padding_button_v;
+	r.x = left;
+	r.w = text_height;
+	Rectangle box = enlarge(r, padding_button_v, padding_button_v);
+	Color white = {1.0f, 1.0f, 1.0f, 1.0f};
+	draw_filled_rectangle(white, box);
+	Color black = {0.0f, 0.0f, 0.0f, 1.0f};
+	draw_rectangle(black, 1.0f, box);
 	render_texture(players_turn ? t_x : t_o, left, top, 0.0f, text_height);
 
 	// statistics
