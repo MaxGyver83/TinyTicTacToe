@@ -8,7 +8,6 @@
 #include "gamelogic.h"                // for Line, Player, computer_move_ver...
 #include "graphics.h"                 // for render_texture, load_texture
 #include "init.h"                     // for win_width, win_height
-#include "layout.h"                   // for layout_row_add, layout_row_begin
 #include "mouse.h"                    // for mouse, is_mouse_in_rectangle
 #include "settings.h"                 // for render_window
 #include "utils.h"                    // for error, info, random_int, sleep_...
@@ -342,12 +341,7 @@ render_game_information(void)
 
 	// settings button
 	top += line_height * 2.0f - gap / 2.0f;
-	LayoutRow *row = layout_row_begin(game_area.x + gap, top, 0.0f, text_height, gap);
-	layout_row_add(row, t_difficulty, 0.0f, 0.0f);
-	layout_row_add(row, t_digits[difficulty], 0.0f, 0.0f);
-	b_settings = layout_row_end(row);
-	layout_row_render(row);
-	layout_row_free_all(row);
+	b_settings = render_texture(t_levels[difficulty-1], game_area.x + gap, top, 0.0f, text_height);
 	draw_button(line_height / 20.0f, make_button(b_settings));
 }
 
