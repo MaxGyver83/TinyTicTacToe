@@ -49,6 +49,7 @@ Texture load_texture_from_pixmap_and_free_data(struct Pixmap pixmap);
 Rectangle render_texture(Texture texture, float x, float y, float width, float height);
 Rectangle render_texture_with_anchor(Texture texture, float x, float y, float width, float height, HorizontalAnchor anchor_h, VerticalAnchor anchor_v);
 Color pixel_to_color(const Pixel pixel);
+void draw_line(const Color c, float thickness, float x1, float y1, float x2, float y2);
 void draw_filled_rectangle(const Color c, Rectangle r);
 void draw_rectangle(const Color color, float thickness, Rectangle r);
 void draw_button(float thickness, Rectangle r);

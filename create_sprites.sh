@@ -19,7 +19,6 @@ mkdir -p app/src/main/assets/sprites
 cd app/src/main/assets/sprites
 rm ./*
 
-create_sprite 'Tiny Tic Tac Toe' 240
 create_sprite 'has won!'
 create_sprite 'Draw'
 create_sprite 'Next turn:'

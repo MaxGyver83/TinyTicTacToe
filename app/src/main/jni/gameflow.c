@@ -5,6 +5,7 @@
 #include <string.h>                   // for memset
 #include <time.h>                     // for time
 #include "audio.h"                    // for destroy_audio_engine, destroy_a...
+#include "font.h"
 #include "gamelogic.h"                // for Line, Player, computer_move_ver...
 #include "graphics.h"                 // for render_texture, load_texture
 #include "init.h"                     // for win_width, win_height
@@ -48,12 +49,11 @@ Texture t_difficulty;
 Texture t_digits[10];
 Texture t_levels[LEVEL_COUNT];
 
-static Texture t_grid;
+Texture t_o;
 static Texture t_x;
-static Texture t_o;
 static Texture t_x_highlight;
 static Texture t_o_highlight;
-static Texture t_tinytictactoe;
+static Texture t_grid;
 static Texture t_nextturn;
 static Texture t_haswon;
 static Texture t_draw;
@@ -146,7 +146,6 @@ init_game()
 	pixmap = create_o_pixmap(200, color_o);
 	t_o = load_texture_from_pixmap_and_free_data(pixmap);
 
-	t_tinytictactoe = load_texture("tiny_tic_tac_toe.pgm");
 	t_nextturn = load_texture("next_turn.pgm");
 	t_haswon = load_texture("has_won.pgm");
 	t_draw = load_texture("draw.pgm");
@@ -377,8 +376,7 @@ render()
 	glClearColor(bgcolor.r, bgcolor.g, bgcolor.b, bgcolor.a);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	float text_width = game_area.w * 0.8f;
-	render_texture_with_anchor(t_tinytictactoe, win_width / 2.0f, game_area.y / 2.0f, text_width, 0.0f, CENTER_H, CENTER_V);
+	draw_text("TINY TIC TAC TOE", win_width / 10, (game_area.y / 2) - text_height / 2, text_height, gap);
 
 	render_texture(t_grid, game_area.x, game_area.y, game_area.w, game_area.h);
 
@@ -551,7 +549,6 @@ shutdown_game()
 	glDeleteTextures(1, &t_o.t);
 	glDeleteTextures(1, &t_x_highlight.t);
 	glDeleteTextures(1, &t_o_highlight.t);
-	glDeleteTextures(1, &t_tinytictactoe.t);
 	glDeleteTextures(1, &t_nextturn.t);
 	glDeleteTextures(1, &t_haswon.t);
 	glDeleteTextures(1, &t_draw.t);

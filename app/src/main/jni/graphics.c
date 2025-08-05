@@ -334,12 +334,6 @@ draw_filled_region(const Color c, float x, float y, float width, float height)
 }
 
 void
-draw_filled_rectangle(const Color c, Rectangle r)
-{
-	draw_filled_region(c, r.x, r.y, r.w, r.h);
-}
-
-static void
 draw_line(const Color c, float thickness, float x1, float y1, float x2, float y2)
 {
 	// Line vertex data
@@ -363,6 +357,12 @@ draw_line(const Color c, float thickness, float x1, float y1, float x2, float y2
 
 	// Draw the line
 	glDrawArrays(GL_LINES, 0, 2);
+}
+
+void
+draw_filled_rectangle(const Color c, Rectangle r)
+{
+	draw_filled_region(c, r.x, r.y, r.w, r.h);
 }
 
 void
