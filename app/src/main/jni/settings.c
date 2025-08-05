@@ -37,17 +37,17 @@ static void
 initialize(void)
 {
 	float padding = win_width * 0.05f;
-	text_height_title = win_width * 0.08f;
+	text_height_title = win_width * 0.12f;
 	line_height_title = text_height_title * 1.2f;
 	settings_window_height = padding * 2 + line_height_title;
-	text_height = win_width * 0.06f;
+	text_height = win_width * 0.10f;
 	button_height = text_height * 1.2f;
-	line_height = button_height * 1.2f;
+	line_height = button_height * 1.3f;
 	button_width = text_height * t_digits[LEVEL_COUNT].w / t_digits[LEVEL_COUNT].h
 		+ padding / 2 + text_height * t_levels[LEVEL_COUNT-1].w / t_levels[LEVEL_COUNT-1].h
 		+ 2 * gap;
 	float settings_window_width = button_width + 2 * padding;
-	settings_window_height += text_height + (LEVEL_COUNT - 1) * line_height;
+	settings_window_height += button_height + (LEVEL_COUNT - 1) * line_height;
 	settings_window_rect = (Rectangle){
 		.x = (win_width - settings_window_width) / 2,
 			.y = (win_height - settings_window_height) / 2,

@@ -338,7 +338,7 @@ update_geometry()
 	float space_for_title = padding * 2.0f; // includes padding
 	game_area.w = game_area.h = short_side - padding * 2.0f;
 	game_area.y = (win_height - game_area.h) / 2.0f;
-	text_height = game_area.w / 14.0f;
+	text_height = game_area.w / 11.0f;
 	line_height = text_height * 1.2f;
 	// try to center the game area vertically,
 	// except when the stats area needs more space:
@@ -359,7 +359,7 @@ render()
 	glClearColor(bgcolor.r, bgcolor.g, bgcolor.b, bgcolor.a);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	float text_width = game_area.w * 0.7f;
+	float text_width = game_area.w * 0.8f;
 	render_texture_with_anchor(t_tinytictactoe, win_width / 2.0f, game_area.y / 2.0f, text_width, 0.0f, CENTER_H, CENTER_V);
 
 	render_texture(t_grid, game_area.x, game_area.y, game_area.w, game_area.h);
