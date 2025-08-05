@@ -50,7 +50,7 @@ Rectangle render_texture(Texture texture, float x, float y, float width, float h
 Rectangle render_texture_with_anchor(Texture texture, float x, float y, float width, float height, HorizontalAnchor anchor_h, VerticalAnchor anchor_v);
 Color pixel_to_color(const Pixel pixel);
 void draw_filled_rectangle(const Color c, Rectangle r);
-void draw_rectangle(const Color c, float thickness, float x, float y, float width, float height);
+void draw_rectangle(const Color color, float thickness, Rectangle r);
 void draw_button(float thickness, Rectangle r);
 void draw_highlighted_button(float thickness, Rectangle r);
 

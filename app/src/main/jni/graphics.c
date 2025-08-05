@@ -366,13 +366,12 @@ draw_line(const Color c, float thickness, float x1, float y1, float x2, float y2
 }
 
 void
-draw_rectangle(const Color color, float thickness,
-		float x, float y, float width, float height)
+draw_rectangle(const Color color, float thickness, Rectangle r)
 {
-	float left = x;
-	float right = x + width;
-	float top = y;
-	float bottom = y + height;
+	float left = r.x;
+	float right = r.x + r.w;
+	float top = r.y;
+	float bottom = r.y + r.h;
 	float t2 = thickness / 2.0f;
 	draw_line(color, thickness, left - t2, top, right + t2, top);
 	draw_line(color, thickness, left - t2, bottom, right + t2, bottom);
