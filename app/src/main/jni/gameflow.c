@@ -176,6 +176,13 @@ reset_game(void)
 }
 
 static void
+toggle_settings(void)
+{
+	play_audio("audio/pick.ogg");
+	show_settings = !show_settings;
+}
+
+static void
 render_highlight(void)
 {
 	if (!winner)
@@ -469,10 +476,11 @@ update()
 		} else if (mouse.is_down) {
 			mouse.is_down = false;
 			if (!is_mouse_in_rectangle(settings_window_rect)) {
-				show_settings = false;
+				toggle_settings();
 				return true;
 			} else for (int i = 0; i < LEVEL_COUNT; i++) {
 				if (is_mouse_in_rectangle(b_difficulty[i])) {
+					play_audio("audio/pick.ogg");
 					difficulty = i + 1;
 					save_statistics();
 					delay = 3;
@@ -481,8 +489,9 @@ update()
 			}
 		} else if (keyboard_field_selection >= 0) {
 			if (keyboard_field_selection == 0) {
-				show_settings = false;
+				toggle_settings();
 			} else if (keyboard_field_selection <= 5) {
+				play_audio("audio/pick.ogg");
 				difficulty = keyboard_field_selection;
 				save_statistics();
 				delay = 3;
@@ -492,7 +501,7 @@ update()
 		}
 	} else if (keyboard_field_selection >= 0) {
 		if (keyboard_field_selection == 0) {
-			show_settings = true;
+			toggle_settings();
 		} else { // 1-9
 			// 7/8/9 is top row (like on a numpad):
 			// Swap 1/2/3 with 7/8/9
@@ -512,7 +521,7 @@ update()
 		if (is_mouse_in_rectangle(game_area)) {
 			player_move();
 		} else if (is_mouse_in_rectangle(b_settings)) {
-			show_settings = true;
+			toggle_settings();
 		}
 		mouse.is_down = false;
 		return true;
