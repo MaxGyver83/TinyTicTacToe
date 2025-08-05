@@ -270,12 +270,13 @@ render_statistics(float right, float top)
 		// i == 0: Calculate width of "Draw"
 		// i >= 1: width = text_height (square X or O texture)
 		float width = (i == 0) ? text_height * t_draw.w / t_draw.h : text_height;
+		width += 2 * gap;
 		int number = stats[i];
 		do {
 			int digit = number % 10;
 			number = number / 10;
 			float digit_width = text_height * t_digits[digit].w / t_digits[digit].h;
-			width += gap + digit_width;
+			width += digit_width;
 		} while (number > 0);
 		if (width > max_width)
 			max_width = width;
