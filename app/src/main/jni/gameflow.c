@@ -246,7 +246,6 @@ static void
 render_winner(void)
 {
 	float size = game_area.w / 10.0f;
-	gap = 0.15f * size;
 	float y = game_area.y + game_area.h;
 	y = (win_height + y - size) / 2.0f;
 	if (winner) {
@@ -311,7 +310,6 @@ render_game_information(void)
 {
 	float left = game_area.x;
 	float top = game_area.y + game_area.h + padding;
-	gap = game_area.w * 0.015f;
 	// next turn
 	Rectangle r = render_texture(t_nextturn, left, top, 0.0f, text_height);
 	left += r.w + gap;
@@ -351,6 +349,7 @@ update_geometry()
 		game_area.w = game_area.h = win_height - space_for_title - space_for_stats;
 	}
 	game_area.x = (win_width - game_area.w) / 2.0f;
+	gap = game_area.w * 0.015f;
 }
 
 void
