@@ -26,6 +26,8 @@ extern Rectangle b_difficulty[LEVEL_COUNT];
 int difficulty = 1;
 int keyboard_field_selection = -1;
 float gap; // space between words
+float padding_button_h;
+float padding_button_v;
 
 static const Pixel color_x = {0xFF, 0x80, 0x00, 0xFF};
 static const Pixel color_o = {0x00, 0x00, 0xFF, 0xFF};
@@ -298,10 +300,10 @@ render_statistics(float right, float top)
 static Rectangle
 make_button(Rectangle r)
 {
-	r.w += gap * 2;
-	r.x -= gap;
-	r.h += gap;
-	r.y -= gap / 2;
+	r.w += 2 * padding_button_h;
+	r.x -= padding_button_h;
+	r.h += 2 * padding_button_v;
+	r.y -= padding_button_v;
 	return r;
 }
 
@@ -350,6 +352,8 @@ update_geometry()
 	}
 	game_area.x = (win_width - game_area.w) / 2.0f;
 	gap = game_area.w * 0.015f;
+	padding_button_h = 2 * gap;
+	padding_button_v = gap / 2;
 }
 
 void

@@ -12,7 +12,8 @@ extern Texture t_difficulty;
 extern Texture t_levels[];
 extern Texture t_digits[10];
 extern const Color bgcolor;
-extern float gap;
+extern float padding_button_h;
+extern float padding_button_v;
 
 bool show_settings = false;
 Rectangle settings_window_rect = {0.0f, 0.0f, 1.0f, 1.0f};
@@ -45,7 +46,7 @@ initialize(void)
 	line_height = button_height * 1.3f;
 	button_width = text_height * t_digits[LEVEL_COUNT].w / t_digits[LEVEL_COUNT].h
 		+ padding / 2 + text_height * t_levels[LEVEL_COUNT-1].w / t_levels[LEVEL_COUNT-1].h
-		+ 2 * gap;
+		+ 2 * padding_button_h;
 	float settings_window_width = button_width + 2 * padding;
 	settings_window_height += button_height + (LEVEL_COUNT - 1) * line_height;
 	settings_window_rect = (Rectangle){
@@ -76,7 +77,7 @@ render_window()
 	render_texture_with_anchor(t_difficulty, center_x, y, 0.0f, text_height_title, CENTER_H, TOP);
 	y += line_height_title;
 	float x = r.x + padding;
-	float x_text = x + gap;
+	float x_text = x + padding_button_h;
 	for (int i = 0; i < LEVEL_COUNT; i++) {
 		// draw button frame and background
 		b_difficulty[i] = (Rectangle){x, y, button_width, button_height};
@@ -86,7 +87,7 @@ render_window()
 			draw_button(button_height / 20.0f, b_difficulty[i]);
 
 		// draw button text
-		float y_text = y + gap / 2;
+		float y_text = y + padding_button_v;
 		Rectangle digit = render_texture(t_digits[i+1], x_text, y_text, 0, text_height);
 		render_texture(t_levels[i], x_text + digit.w + padding / 2, y_text,
 				0, text_height);
