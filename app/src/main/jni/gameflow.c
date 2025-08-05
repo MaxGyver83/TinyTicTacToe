@@ -253,7 +253,7 @@ render_xs_and_os(void)
 static void
 render_winner(void)
 {
-	float size = game_area.w / 10.0f;
+	float size = game_area.w / 8.0f;
 	float y = game_area.y + game_area.h;
 	y = (win_height + y - size) / 2.0f;
 	if (winner) {
