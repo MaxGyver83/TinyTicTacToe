@@ -16,7 +16,7 @@ read_file_to_buffer(const char *filename)
 	// Open the file in binary mode
 	FILE *file = fopen(filename, "rb");
 	if (file == NULL) {
-		error("Error opening file");
+		error("Error opening file %s", filename);
 		return NULL;
 	}
 
