@@ -14,6 +14,8 @@
 #define TARGET_FPS 20
 #define TARGET_FRAME_TIME (1.0f / TARGET_FPS)
 
+extern int keyboard_field_selection;
+
 int start_level = 0; // 0 = read from stats.txt
 
 static const char *
@@ -84,17 +86,20 @@ handle_input(struct android_app *app, AInputEvent *event)
 			y = AMotionEvent_getY(event, i);
 			index = AMotionEvent_getPointerId(event, i);
 
-			if (action == AMOTION_EVENT_ACTION_POINTER_DOWN || action == AMOTION_EVENT_ACTION_DOWN) {
-				int id = index;
-				if (action == AMOTION_EVENT_ACTION_POINTER_DOWN && id != whichsource) continue;
+			if (action == AMOTION_EVENT_ACTION_POINTER_DOWN
+					|| action == AMOTION_EVENT_ACTION_DOWN) {
+				if (action == AMOTION_EVENT_ACTION_POINTER_DOWN && index != whichsource)
+					continue;
 
 				mouse.x = mouse.x0 = x;
 				mouse.y = mouse.y0 = y;
 				mouse.is_down = true;
 				mouse.is_released = false;
-			} else if (action == AMOTION_EVENT_ACTION_POINTER_UP || action == AMOTION_EVENT_ACTION_UP || action == AMOTION_EVENT_ACTION_CANCEL) {
-				int id = index;
-				if (action == AMOTION_EVENT_ACTION_POINTER_UP && id != whichsource) continue;
+			} else if (action == AMOTION_EVENT_ACTION_POINTER_UP
+					|| action == AMOTION_EVENT_ACTION_UP
+					|| action == AMOTION_EVENT_ACTION_CANCEL) {
+				if (action == AMOTION_EVENT_ACTION_POINTER_UP && index != whichsource)
+					continue;
 
 				mouse.x = x;
 				mouse.y = y;
@@ -111,17 +116,27 @@ handle_input(struct android_app *app, AInputEvent *event)
 				mouse.y = y;
 			}
 		}
-
 		return 1;
-	} else if (eventType == AINPUT_EVENT_TYPE_KEY) { // Apparently, this applies to physical keys, including volume control keys.
-		if (AKeyEvent_getAction(event) == AKEY_EVENT_ACTION_UP) {
+
+	} else if (eventType == AINPUT_EVENT_TYPE_KEY) {
+		if (AKeyEvent_getAction(event) == AKEY_EVENT_ACTION_DOWN) {
 			int32_t key_val = AKeyEvent_getKeyCode(event);
-			if (key_val == AKEYCODE_Q)
+			if (key_val >= AKEYCODE_0 && key_val <= AKEYCODE_9) {
+				if (keyboard_field_selection < 0) {
+					keyboard_field_selection = key_val - AKEYCODE_0; // 0-9
+					return 1;
+				}
+			}
+		} else if (AKeyEvent_getAction(event) == AKEY_EVENT_ACTION_UP) {
+			int32_t key_val = AKeyEvent_getKeyCode(event);
+			if (key_val == AKEYCODE_Q) {
 				app->destroyRequested = 1;
+				return 1;
+			}
 		}
 		return 0;
 	}
-	return 0; //Return 0 if you are not processing the event
+	return 0; // return 0 if you are not processing the event
 }
 
 void
