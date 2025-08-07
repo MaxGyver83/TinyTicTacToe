@@ -326,7 +326,7 @@ render_game_information(void)
 	Color white = {1.0f, 1.0f, 1.0f, 1.0f};
 	draw_filled_rectangle(white, box);
 	Color black = {0.0f, 0.0f, 0.0f, 1.0f};
-	draw_rectangle(black, 1.0f, box);
+	draw_rectangle(black, win_width / 200.0f, box);
 	render_texture(players_turn ? t_x : t_o, left, top, 0.0f, text_height);
 
 	// statistics
