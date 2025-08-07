@@ -28,12 +28,13 @@ int keyboard_field_selection = -1;
 float gap; // space between words
 float padding_button_h;
 float padding_button_v;
+const Color bgcolor = {0.4f, 1.0f, 0.8f, 1.0f};
+const Color black = {0.0f, 0.0f, 0.0f, 1.0f};
 
 static const Pixel color_x = {0xFF, 0x80, 0x00, 0xFF};
 static const Pixel color_o = {0x00, 0x00, 0xFF, 0xFF};
 static const Pixel color_x_highlight = {0xFF, 0x80, 0x00, 0x40};
 static const Pixel color_o_highlight = {0x00, 0x00, 0xFF, 0x40};
-const Color bgcolor = {0.4f, 1.0f, 0.8f, 1.0f};
 
 static int stats[] = {0, 0, 0};
 static bool done = false;
@@ -325,7 +326,6 @@ render_game_information(void)
 	Rectangle box = enlarge(r, padding_button_v, padding_button_v);
 	Color white = {1.0f, 1.0f, 1.0f, 1.0f};
 	draw_filled_rectangle(white, box);
-	Color black = {0.0f, 0.0f, 0.0f, 1.0f};
 	draw_rectangle(black, win_width / 200.0f, box);
 	render_texture(players_turn ? t_x : t_o, left, top, 0.0f, text_height);
 

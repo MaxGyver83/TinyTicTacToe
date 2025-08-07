@@ -14,6 +14,7 @@ typedef struct {
 
 extern int32_t win_width;
 extern const Color bgcolor;
+extern const Color black;
 extern Texture t_o;
 
 static const Point glyph_T[] = {
@@ -79,7 +80,6 @@ draw_glyph(char c, float x, float y, float height)
 	float width = g->width * height;
 	float strength = win_width / 80.0f;
 	int i = 0;
-	const Color black = {0.0f, 0.0f, 0.0f, 1.0f};
 	const Color orange = {1.0f, 0.5f, 0.0f, 1.0f};
 	const Color color = (c == 'T') ? orange : black;
 	while (i + 1 < g->count) {
