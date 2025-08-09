@@ -278,6 +278,19 @@ make_button(Rectangle r)
 	return enlarge(r, padding_button_h, padding_button_v);
 }
 
+static float
+rendered_number_width(int number, float height)
+{
+	float width = 0.0f;
+	do {
+		int digit = number % 10;
+		number /= 10;
+		float digit_width = height * t_digits[digit].w / t_digits[digit].h;
+		width += digit_width;
+	} while (number > 0);
+	return width;
+}
+
 static void
 render_statistics(float right, float top)
 {
@@ -287,14 +300,7 @@ render_statistics(float right, float top)
 		// i == 0: Calculate width of "Draw"
 		// i >= 1: width = text_height (square X or O texture)
 		float width = (i == 0) ? text_height * t_draw.w / t_draw.h : text_height;
-		width += 2 * gap;
-		int number = stats[i];
-		do {
-			int digit = number % 10;
-			number = number / 10;
-			float digit_width = text_height * t_digits[digit].w / t_digits[digit].h;
-			width += digit_width;
-		} while (number > 0);
+		width += 2 * gap + rendered_number_width(stats[i], text_height);
 		if (width > max_width)
 			max_width = width;
 	}
