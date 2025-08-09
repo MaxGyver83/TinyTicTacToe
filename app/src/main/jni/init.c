@@ -23,6 +23,7 @@ char stats_filepath[256] = "./stats.txt";
 
 int32_t win_width = 0;
 int32_t win_height = 0;
+float max_line_width = 1.0f;
 
 GLuint texture_program;
 GLuint color_program;
@@ -151,6 +152,12 @@ init(EGLNativeDisplayType dpy, void *native_window)
 		error("eglMakeCurrent() returned with an error");
 		return;
 	}
+
+	GLfloat range[2];
+	glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, range);
+	// My laptop: line width range is from 1.0 to 7.375
+	// One Plus Nord 2: line width range is from 1.0 to 4095.9375
+	max_line_width = range[1];
 
 	// Set window size
 	update_window_size();

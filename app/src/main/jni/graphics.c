@@ -20,6 +20,7 @@
 
 extern GLuint color_program;
 extern float gap;
+extern float max_line_width;
 
 static const Color buttoncolor = {0.0f, 0.0f, 1.0f, 0.25f};
 static const Color buttoncolor_highlighted = {1.0f, 0.5f, 0.0f, 0.75f};
@@ -368,15 +369,28 @@ draw_filled_rectangle(const Color c, Rectangle r)
 void
 draw_rectangle(const Color color, float thickness, Rectangle r)
 {
-	float left = r.x;
-	float right = r.x + r.w;
-	float top = r.y;
-	float bottom = r.y + r.h;
-	float t2 = thickness / 2.0f;
-	draw_line(color, thickness, left - t2, top, right + t2, top);
-	draw_line(color, thickness, left - t2, bottom, right + t2, bottom);
-	draw_line(color, thickness, left, top, left, bottom);
-	draw_line(color, thickness, right, top, right, bottom);
+	int left = r.x;
+	int right = r.x + r.w;
+	int top = r.y;
+	int bottom = r.y + r.h;
+	thickness = (int)thickness; // round down to full pixel
+	int t_end = thickness / 2;       // 5 -> 2
+	int t_start = thickness - t_end; // 5 -> 3
+	if (thickness <= max_line_width) {
+		draw_line(color, thickness, left - t_start, top, right + t_end, top);
+		draw_line(color, thickness, left - t_start, bottom, right + t_end, bottom);
+		draw_line(color, thickness, left, top - t_start, left, bottom + t_end);
+		draw_line(color, thickness, right, top - t_start, right, bottom + t_end);
+	} else {
+		left -= t_start;
+		right -= t_start;
+		top -= t_start;
+		bottom -= t_start;
+		draw_filled_region(color, left, top, r.w + thickness, thickness);
+		draw_filled_region(color, left, bottom, r.w + thickness, thickness);
+		draw_filled_region(color, left, top, thickness, r.h + thickness);
+		draw_filled_region(color, right, top, thickness, r.h + thickness);
+	}
 }
 
 static void
