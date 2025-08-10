@@ -383,7 +383,11 @@ render_game_information(void)
 	render_texture(players_turn ? t_x : t_o, left, top, 0.0f, text_height);
 
 	// statistics
-	render_statistics_bar(top + 2 * line_height);
+	float y_stats = top + 2 * line_height;
+	// use some extra space on long devices:
+	float remaining_space = win_height - y_stats - line_height - padding;
+	y_stats += MIN(remaining_space, line_height);
+	render_statistics_bar(y_stats);
 
 	// settings button
 	float x = game_area.x + game_area.w - padding_button_h;
