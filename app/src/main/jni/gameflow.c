@@ -31,6 +31,7 @@ float padding_button_v;
 const Color bgcolor = {0.4f, 1.0f, 0.8f, 1.0f};
 const Color black = {0.0f, 0.0f, 0.0f, 1.0f};
 
+static const Color white = {1.0f, 1.0f, 1.0f, 1.0f};
 static const Pixel color_x = {0xFF, 0x80, 0x00, 0xFF};
 static const Pixel color_o = {0x00, 0x00, 0xFF, 0xFF};
 static const Pixel color_x_highlight = {0xFF, 0x80, 0x00, 0x40};
@@ -59,7 +60,6 @@ static Texture t_nextturn;
 static Texture t_youhavewon;
 static Texture t_youhavelost;
 static Texture t_draw;
-static Texture *stats_textures[3] = {&t_draw, &t_x, &t_o};
 
 static Texture
 create_grid(int size)
@@ -292,30 +292,78 @@ rendered_number_width(int number, float height)
 }
 
 static void
-render_statistics(float right, float top)
+render_number(int number, float x, float y, HorizontalAnchor anchor)
 {
-	float y = top;
-	float max_width = 0.0f;
-	for (int i = 0; i < 3; i++) {
-		// i == 0: Calculate width of "Draw"
-		// i >= 1: width = text_height (square X or O texture)
-		float width = (i == 0) ? text_height * t_draw.w / t_draw.h : text_height;
-		width += 2 * gap + rendered_number_width(stats[i], text_height);
-		if (width > max_width)
-			max_width = width;
+	if (anchor == LEFT)
+		x += rendered_number_width(number, text_height);
+	else if (anchor == CENTER_H)
+		x += rendered_number_width(number, text_height) / 2;
+	do {
+		int digit = number % 10;
+		number = number / 10;
+		Rectangle r = render_texture_with_anchor(t_digits[digit], x, y, 0.0f, text_height, RIGHT, TOP);
+		x -= r.w;
+	} while (number > 0);
+	y += line_height;
+}
+
+static void
+render_statistics_bar(float y)
+{
+	int draws = stats[0];
+	int wins = stats[1];
+	int losses = stats[2];
+	int game_count = draws + wins + losses;
+	if (game_count == 0)
+		return;
+
+	// calculate bar widths
+	float width_won = (float)wins / game_count * game_area.w;
+	float width_lost = (float)losses / game_count * game_area.w;
+	float width_draw = game_area.w - width_won - width_lost;
+
+	// make sure the bars have a minimum width
+	float min_width = game_area.w / 100.0f;
+	float *widest = &width_draw;
+	if (width_won > *widest)
+		widest = &width_won;
+	if (width_lost > *widest)
+		widest = &width_lost;
+	if (losses == 0) {
+		width_lost = min_width;
+		*widest -= min_width;
 	}
-	float left = right - max_width;
-	for (int i = 0; i < 3; i++) {
-		render_texture(*stats_textures[i], left, y, 0.0f, text_height);
-		int number = stats[i];
-		int x = right;
-		do {
-			int digit = number % 10;
-			number = number / 10;
-			Rectangle r = render_texture_with_anchor(t_digits[digit], x, y, 0.0f, text_height, RIGHT, TOP);
-			x -= r.w;
-		} while (number > 0);
-		y += line_height;
+	if (wins == 0) {
+		width_won = min_width;
+		*widest -= min_width;
+	}
+
+	// render bars
+	Color color_won = {1.0f, 0.5f, 0.0f, 0.6f};
+	Color color_lost = {0.0f, 0.0f, 1.0f, 0.4f};
+	float left = game_area.x;
+	Rectangle r_bar = {left, y, game_area.w, text_height};
+	draw_filled_rectangle(white, r_bar);
+	draw_filled_rectangle(color_won, (Rectangle){left, y, width_won, text_height});
+	float x = left + width_won + width_draw;
+	draw_filled_rectangle(color_lost, (Rectangle){x, y, width_lost, text_height});
+	draw_rectangle(black, win_width / 200.0f, r_bar);
+
+	// render numbers and description
+	float y_desc = y - text_height * 0.5f;
+	if (wins) {
+		render_number(wins, left + padding_button_h, y, LEFT);
+		render_texture_with_anchor(t_x, left + padding_button_h, y_desc, 0.0f, text_height * 0.6f, LEFT, CENTER_V);
+	}
+	if (draws) {
+		float x_draw = left + width_won + width_draw / 2.0f;
+		render_number(draws, x_draw, y, CENTER_H);
+		render_texture_with_anchor(t_draw, x_draw, y_desc, 0.0f, text_height * 0.8f, CENTER_H, CENTER_V);
+	}
+	if (losses) {
+		float right = game_area.x + game_area.w;
+		render_number(losses, right - padding_button_h, y, RIGHT);
+		render_texture_with_anchor(t_o, right - padding_button_h, y_desc, 0.0f, text_height * 0.6f, RIGHT, CENTER_V);
 	}
 }
 
@@ -330,17 +378,16 @@ render_game_information(void)
 	r.x = left;
 	r.w = text_height;
 	Rectangle box = enlarge(r, padding_button_v, padding_button_v);
-	Color white = {1.0f, 1.0f, 1.0f, 1.0f};
 	draw_filled_rectangle(white, box);
 	draw_rectangle(black, win_width / 200.0f, box);
 	render_texture(players_turn ? t_x : t_o, left, top, 0.0f, text_height);
 
 	// statistics
-	render_statistics(game_area.x + game_area.w, top);
+	render_statistics_bar(top + 2 * line_height);
 
 	// settings button
-	top += line_height * 2.0f - gap / 2.0f;
-	b_settings = render_texture(t_levels[difficulty-1], game_area.x + gap, top, 0.0f, text_height);
+	float x = game_area.x + game_area.w - padding_button_h;
+	b_settings = render_texture_with_anchor(t_levels[difficulty-1], x, top, 0.0f, text_height, RIGHT, TOP);
 	draw_button(line_height / 20.0f, make_button(b_settings));
 }
 
