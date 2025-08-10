@@ -351,19 +351,19 @@ render_statistics_bar(float y)
 
 	// render numbers and description
 	float y_desc = y - text_height * 0.5f;
+	render_texture_with_anchor(t_x, left + padding_button_h, y_desc, 0.0f, text_height * 0.6f, LEFT, CENTER_V);
 	if (wins) {
 		render_number(wins, left + padding_button_h, y, LEFT);
-		render_texture_with_anchor(t_x, left + padding_button_h, y_desc, 0.0f, text_height * 0.6f, LEFT, CENTER_V);
 	}
 	if (draws) {
 		float x_draw = left + width_won + width_draw / 2.0f;
 		render_number(draws, x_draw, y, CENTER_H);
 		render_texture_with_anchor(t_draw, x_draw, y_desc, 0.0f, text_height * 0.8f, CENTER_H, CENTER_V);
 	}
+	float right = game_area.x + game_area.w;
+	render_texture_with_anchor(t_o, right - padding_button_h, y_desc, 0.0f, text_height * 0.6f, RIGHT, CENTER_V);
 	if (losses) {
-		float right = game_area.x + game_area.w;
 		render_number(losses, right - padding_button_h, y, RIGHT);
-		render_texture_with_anchor(t_o, right - padding_button_h, y_desc, 0.0f, text_height * 0.6f, RIGHT, CENTER_V);
 	}
 }
 
