@@ -126,7 +126,7 @@ save_statistics(void)
 }
 
 bool
-init_game()
+init_game(void)
 {
 	srand(time(NULL));
 	t_grid = create_grid(win_width * 0.9f);
@@ -392,7 +392,7 @@ render_game_information(void)
 }
 
 void
-update_geometry()
+update_geometry(void)
 {
 	float short_side = MIN(win_width, win_height);
 	padding = short_side * 0.05f;
@@ -417,7 +417,7 @@ update_geometry()
 }
 
 void
-render()
+render(void)
 {
 	glViewport(0, 0, win_width, win_height);
 	glClearColor(bgcolor.r, bgcolor.g, bgcolor.b, bgcolor.a);
@@ -501,7 +501,7 @@ player_move(void)
 }
 
 bool
-update()
+update(void)
 {
 	if (done) {
 		if (mouse.is_down || keyboard_field_selection >= 0) {
@@ -582,7 +582,7 @@ update()
 }
 
 void
-shutdown_game()
+shutdown_game(void)
 {
 	destroy_audio_player();
 	destroy_audio_engine();

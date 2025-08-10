@@ -92,7 +92,7 @@ play_audio(const char *filename)
 }
 
 void
-destroy_audio_player()
+destroy_audio_player(void)
 {
 	if (pcm_handle) {
 		snd_pcm_drain(pcm_handle);
@@ -100,5 +100,5 @@ destroy_audio_player()
 	}
 }
 
-void create_audio_engine() {}
-void destroy_audio_engine() {}
+void create_audio_engine(void) {}
+void destroy_audio_engine(void) {}

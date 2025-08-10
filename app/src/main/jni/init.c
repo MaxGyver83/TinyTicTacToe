@@ -66,7 +66,7 @@ static const GLchar *fragment_shader_color = //"#version 120\n"
 "}";
 
 bool
-update_window_size()
+update_window_size(void)
 {
 	int32_t new_win_width, new_win_height;
 	eglQuerySurface(egl_display, egl_surface, EGL_WIDTH, &new_win_width);
@@ -188,7 +188,7 @@ init_android(struct android_app *app)
 }
 
 void
-main_loop_step()
+main_loop_step(void)
 {
 	if (egl_display == EGL_NO_DISPLAY)
 		return;
@@ -202,7 +202,7 @@ main_loop_step()
 }
 
 void
-shutdown_all()
+shutdown_all(void)
 {
 	info("Shutdown");
 	if (!g_initialized)

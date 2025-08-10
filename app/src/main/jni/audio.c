@@ -40,7 +40,7 @@ reset_player(AudioPlayer *player)
 }
 
 void
-create_audio_engine()
+create_audio_engine(void)
 {
 	SLresult result;
 
@@ -267,7 +267,7 @@ play_audio(const char *asset_path)
 }
 
 void
-destroy_audio_player()
+destroy_audio_player(void)
 {
 	for (int i = 0; i < MAX_PLAYERS; ++i) {
 		if (players[i].player_object) {
@@ -280,7 +280,7 @@ destroy_audio_player()
 }
 
 void
-destroy_audio_engine()
+destroy_audio_engine(void)
 {
 	if (output_mix_object) {
 		(*output_mix_object)->Destroy(output_mix_object);

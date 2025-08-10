@@ -341,7 +341,7 @@ is_draw(void) {
 }
 
 bool
-is_done()
+is_done(void)
 {
 	for (enum Line l = TOP_ROW; l <= ASCENDING_DIAGONAL; l++) {
 		int player = is_three_in_a_line(l);

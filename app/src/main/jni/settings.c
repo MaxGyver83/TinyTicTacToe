@@ -61,7 +61,7 @@ initialize(void)
 }
 
 void
-render_window()
+render_window(void)
 {
 	if (!initialized)
 		initialize();
