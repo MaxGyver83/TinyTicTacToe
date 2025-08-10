@@ -39,7 +39,7 @@ You can use your keyboard to play the game. This allows you a faster gameplay
 (or manual testing) on Linux/X11. External keyboards on Android are supported,
 too.
 
-Use 7, 8, 9 to place your symbol in the top row (number pad), and so on. 0 is
+Use 7, 8, 9 to place your symbol in the top row (number pad), and so on. 's' is
 for settings. Press 1 to 5 to select a difficulty in the settings menu.
 
 ### Open source

@@ -32,7 +32,7 @@
 #define ASPECT_RATIO 1.777
 #define WIDTH (HEIGHT / ASPECT_RATIO)
 
-extern int keyboard_field_selection;
+extern char key_pressed;
 
 Display *dpy;
 int scr;
@@ -98,16 +98,17 @@ process_input(void)
 
 			case KeyPress:
 				key = XkbKeycodeToKeysym(dpy, ev.xkey.keycode, 0, 0);
-				if (key >= XK_0 && key <= XK_9) {
-					if (keyboard_field_selection < 0)
-						keyboard_field_selection = key - XK_0; // 0-9
+				if (key >= XK_0 && key <= XK_9 || key == XK_s) {
+					key_pressed = key;
+				} else if (key == XK_Escape) {
+					key_pressed = '\e';
 				} else if (key == XK_space || key == XK_n) {
 					// Simulate click (in the corner of the window)
 					// to start a new game
 					mouse.x = 0.01f * width;
 					mouse.y = 0.01f * height;
 					mouse.is_down = true;
-				} else if (key == XK_Escape || key == XK_q) {
+				} else if (key == XK_q) {
 					// quit
 					return false;
 				}

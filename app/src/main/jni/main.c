@@ -14,7 +14,7 @@
 #define TARGET_FPS 20
 #define TARGET_FRAME_TIME (1.0f / TARGET_FPS)
 
-extern int keyboard_field_selection;
+extern char key_pressed;
 
 int start_level = 0; // 0 = read from stats.txt
 
@@ -122,10 +122,13 @@ handle_input(struct android_app *app, AInputEvent *event)
 		if (AKeyEvent_getAction(event) == AKEY_EVENT_ACTION_DOWN) {
 			int32_t key_val = AKeyEvent_getKeyCode(event);
 			if (key_val >= AKEYCODE_0 && key_val <= AKEYCODE_9) {
-				if (keyboard_field_selection < 0) {
-					keyboard_field_selection = key_val - AKEYCODE_0; // 0-9
-					return 1;
-				}
+				key_pressed = (char)(key_val - AKEYCODE_0 + '0');
+				return 1;
+			} else if (key_val == AKEYCODE_S) {
+				key_pressed = 's';
+			} else if (key_val == AKEYCODE_ESCAPE) {
+				key_pressed = '\e';
+				return 1;
 			}
 		} else if (AKeyEvent_getAction(event) == AKEY_EVENT_ACTION_UP) {
 			int32_t key_val = AKeyEvent_getKeyCode(event);

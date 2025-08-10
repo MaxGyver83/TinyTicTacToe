@@ -24,7 +24,7 @@ extern Rectangle settings_window_rect;
 extern Rectangle b_difficulty[LEVEL_COUNT];
 
 int difficulty = 1;
-int keyboard_field_selection = -1;
+char key_pressed = 0;
 float gap; // space between words
 float padding_button_h;
 float padding_button_v;
@@ -504,10 +504,10 @@ bool
 update(void)
 {
 	if (done) {
-		if (mouse.is_down || keyboard_field_selection >= 0) {
+		if (mouse.is_down || key_pressed) {
 			reset_game();
 			mouse.is_down = false;
-			keyboard_field_selection = -1;
+			key_pressed = 0;
 			return true;
 		}
 		return false;
@@ -539,35 +539,36 @@ update(void)
 					return true;
 				}
 			}
-		} else if (keyboard_field_selection >= 0) {
-			if (keyboard_field_selection == 0) {
+		} else if (key_pressed) {
+			if (key_pressed == 's' || key_pressed == '\e') {
 				toggle_settings();
-			} else if (keyboard_field_selection <= 5) {
+			} else if (key_pressed >= '1' && key_pressed <= '5') {
 				play_audio("audio/pick.ogg");
-				difficulty = keyboard_field_selection;
+				difficulty = key_pressed - '0';
 				save_statistics();
 				delay = 3;
 			}
-			keyboard_field_selection = -1;
+			key_pressed = 0;
 			return true;
 		}
-	} else if (keyboard_field_selection >= 0) {
-		if (keyboard_field_selection == 0) {
+	} else if (key_pressed) {
+		if (key_pressed == 's') {
 			toggle_settings();
-		} else { // 1-9
+		} else if (key_pressed >= '1' && key_pressed <= '9') {
+			int number = key_pressed - '0';
 			// 7/8/9 is top row (like on a numpad):
 			// Swap 1/2/3 with 7/8/9
-			if (keyboard_field_selection <= 3)
-				keyboard_field_selection += 6;
-			else if (keyboard_field_selection >= 7)
-				keyboard_field_selection -= 6;
-			int index = keyboard_field_selection - 1;  // zero-indexed
+			if (number <= 3)
+				number += 6;
+			else if (number >= 7)
+				number -= 6;
+			int index = number - 1;  // zero-indexed
 			if (fields[index] == NONE) {
 				fields[index] = X;
 				move_done();
 			}
 		}
-		keyboard_field_selection = -1;
+		key_pressed = 0;
 		return true;
 	} else if (mouse.is_down) {
 		if (is_mouse_in_rectangle(game_area)) {
