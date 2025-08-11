@@ -39,6 +39,7 @@ int scr;
 Visual *vis;
 Window root, win;
 int start_level = 0; // 0 = read from stats.txt
+char *prefill = NULL;
 
 static int height = HEIGHT;
 static int width = WIDTH;
@@ -47,7 +48,7 @@ static void
 usage(int exit_code)
 {
 	printf("usage: tinytictactoe [-h] [--full-hd] [--qHD] "
-	       "[--height WIN_HEIGHT] [-l LEVEL]\n");
+	       "[--height WIN_HEIGHT] [-l LEVEL] [--prefill XO-...]\n");
 	exit(exit_code);
 }
 
@@ -98,7 +99,7 @@ process_input(void)
 
 			case KeyPress:
 				key = XkbKeycodeToKeysym(dpy, ev.xkey.keycode, 0, 0);
-				if (key >= XK_0 && key <= XK_9 || key == XK_s) {
+				if ((key >= XK_0 && key <= XK_9) || key == XK_s) {
 					key_pressed = key;
 				} else if (key == XK_Escape) {
 					key_pressed = '\e';
@@ -175,6 +176,15 @@ main(int argc, char *argv[])
 				usage(1);
 			height = atoi(argv[i]);
 			width = height / ASPECT_RATIO;
+		} else if (streq(argv[i], "--prefill")) {
+			i++;
+			if (i >= argc)
+				usage(1);
+			prefill = argv[i];
+			if (strlen(prefill) != 9) {
+				error("Invalid prefill string: %s\nString length must be 9. Example: X--O--X-O", prefill);
+				usage(1);
+			}
 		} else {
 			error("Unknown argument: %s", argv[i]);
 			usage(1);

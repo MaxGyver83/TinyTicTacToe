@@ -1,5 +1,6 @@
 #include "gameflow.h"
 #include <GLES2/gl2.h>                // for glClear, glClearColor, glDelete...
+#include <ctype.h>                    // for toupper
 #include <stdio.h>                    // for printf, fprintf, fscanf, fclose
 #include <stdlib.h>                   // for free, malloc, srand
 #include <string.h>                   // for memset
@@ -22,6 +23,9 @@ extern int winner;
 extern int fields[FIELD_COUNT];
 extern Rectangle settings_window_rect;
 extern Rectangle b_difficulty[LEVEL_COUNT];
+#ifdef X11
+extern char *prefill;
+#endif
 
 int difficulty = 1;
 char key_pressed = 0;
@@ -507,6 +511,24 @@ player_move(void)
 bool
 update(void)
 {
+#ifdef X11
+	if (prefill) {
+		static bool prefill_processed = false;
+		if (prefill_processed == false) {
+			for (int i = 0; i < FIELD_COUNT; i++) {
+				if (toupper(prefill[i]) == 'X')
+					fields[i] = X;
+				else if (toupper(prefill[i]) == 'O')
+					fields[i] = O;
+			}
+			check_if_done();
+			// prevent computer move
+			players_turn = true;
+			prefill_processed = true;
+			return true;
+		}
+	}
+#endif
 	if (done) {
 		if (mouse.is_down || key_pressed) {
 			reset_game();
