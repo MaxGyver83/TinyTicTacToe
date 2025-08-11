@@ -48,7 +48,8 @@ static void
 usage(int exit_code)
 {
 	printf("usage: tinytictactoe [-h] [--full-hd] [--qHD] "
-	       "[--height WIN_HEIGHT] [-l LEVEL] [--prefill XO-...]\n");
+	       "[--height WIN_HEIGHT] [--size WIDTHxHEIGHT] "
+	       "[-l LEVEL] [--prefill XO-...]\n");
 	exit(exit_code);
 }
 
@@ -176,6 +177,22 @@ main(int argc, char *argv[])
 				usage(1);
 			height = atoi(argv[i]);
 			width = height / ASPECT_RATIO;
+		} else if (streq(argv[i], "--size")) {
+			i++;
+			if (i >= argc)
+				usage(1);
+			char *p = strtok(argv[i], "x,");
+			if (!p)
+				usage(1);
+			width = atoi(p);
+			p = strtok(NULL, "x,");
+			if (!p)
+				usage(1);
+			height = atoi(p);
+			if (width == 0 || height == 0) {
+				error("width and height must not be 0.");
+				exit(1);
+			}
 		} else if (streq(argv[i], "--prefill")) {
 			i++;
 			if (i >= argc)
