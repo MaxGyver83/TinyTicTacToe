@@ -2,7 +2,7 @@
 
 The classic tic-tac-toe game for Android and Linux/X11 written in C.
 
-<img src="img/screenshot-x11.png" alt="Screenshot" width="30%">
+<img src="img/screenshot.png" alt="Screenshot" width="30%">
 
 ## Features
 
