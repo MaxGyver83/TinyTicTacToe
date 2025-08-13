@@ -126,7 +126,7 @@ process_input(void)
 				break;
 
 			case ConfigureNotify:
-				main_loop_step();
+				redraw();
 				break;
 		}
 	}

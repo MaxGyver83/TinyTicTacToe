@@ -20,6 +20,7 @@ bool update_window_size(void);
 void init(EGLNativeDisplayType dpy, void *native_window);
 void init_android(struct android_app *app);
 void main_loop_step(void);
+void redraw(void);
 void shutdown_all(void);
 
 #endif // INIT_H

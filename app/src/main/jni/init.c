@@ -202,6 +202,15 @@ main_loop_step(void)
 }
 
 void
+redraw(void)
+{
+	if (egl_display == EGL_NO_DISPLAY)
+		return;
+	render();
+	eglSwapBuffers(egl_display, egl_surface);
+}
+
+void
 shutdown_all(void)
 {
 	info("Shutdown");
