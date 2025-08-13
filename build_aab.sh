@@ -20,6 +20,7 @@ KEYSTORE_ALIAS=${KEYSTORE_ALIAS:-playstore}
 [ -d build ] && rm -r build
 [ -d compiled_resources ] && rm -r compiled_resources
 [ -f resources.apk ] && rm resources.apk
+[ -f app/src/main/libs/symbols.zip ] && rm app/src/main/libs/symbols.zip
 [ -f $AAB_FILE_UNSIGNED ] && rm $AAB_FILE_UNSIGNED
 [ -f $AAB_FILE ] && rm $AAB_FILE
 
