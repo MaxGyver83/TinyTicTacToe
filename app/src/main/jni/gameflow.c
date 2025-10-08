@@ -396,7 +396,8 @@ render_game_information(void)
 	// settings button
 	float x = game_area.x + game_area.w - padding_button_h;
 	b_settings = render_texture_with_anchor(t_levels[difficulty-1], x, top, 0.0f, text_height, RIGHT, TOP);
-	draw_button(line_height / 20.0f, make_button(b_settings));
+	b_settings = make_button(b_settings);
+	draw_button(line_height / 20.0f, b_settings);
 }
 
 void
