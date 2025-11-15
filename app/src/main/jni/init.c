@@ -12,9 +12,7 @@
 #include "utils.h"                    // for info, error
 
 #ifdef X11
-#define ANativeWindow_acquire(x)
 #define ANativeWindow_setBuffersGeometry(...)
-#define ANativeWindow_release(x)
 #endif
 
 bool g_initialized = false;
@@ -91,7 +89,6 @@ init(EGLNativeDisplayType dpy, void *native_window)
 	debug("Initialize.");
 
 #ifndef X11
-	ANativeWindow_acquire(g_app->window);
 	snprintf(stats_filepath, sizeof(stats_filepath), "%s/stats.txt", g_app->activity->internalDataPath);
 #endif
 
@@ -233,7 +230,6 @@ shutdown_all(void)
 	egl_display = EGL_NO_DISPLAY;
 	egl_context = EGL_NO_CONTEXT;
 	egl_surface = EGL_NO_SURFACE;
-	ANativeWindow_release(g_app->window);
 
 	shutdown_game();
 	glDeleteProgram(texture_program);

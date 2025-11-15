@@ -4,7 +4,6 @@
 #include <stdbool.h>                  // for false, true, bool
 #include <stddef.h>                   // for NULL, size_t
 #include <stdint.h>                   // for int32_t, int64_t
-#include <stdlib.h>                   // for exit
 #include <unistd.h>                   // for usleep
 #include <android_native_app_glue.h>  // for android_app, APP_CMD_GAINED_FOCUS
 #include "init.h"                     // for shutdown, init, main_loop_step
@@ -55,11 +54,10 @@ handle_app_cmd(struct android_app *app, int32_t cmd)
 		/* case APP_CMD_CONTENT_RECT_CHANGED: */
 		case APP_CMD_WINDOW_REDRAW_NEEDED:
 			if (g_initialized)
-				main_loop_step();
+				redraw();
 			break;
 		case APP_CMD_TERM_WINDOW:
 			shutdown_all();
-			exit(0);
 			break;
 	}
 }
@@ -160,12 +158,8 @@ android_main(struct android_app* state)
 		while ((ident = ALooper_pollOnce(0, NULL, &events, (void**)&source)) > ALOOPER_POLL_TIMEOUT) {
 			if (source)
 				source->process(state, source);
-
-			if (state->destroyRequested) {
-				shutdown_all();
-				exit(0);
+			if (state->destroyRequested)
 				return;
-			}
 		}
 
 		if (g_initialized) {
