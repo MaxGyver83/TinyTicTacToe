@@ -172,6 +172,9 @@ android_main(struct android_app* state)
 			int64_t sleep_time = TARGET_FRAME_TIME * 1000000 - microsecs_passed;
 			if (sleep_time > 0)
 				usleep(sleep_time);
+		} else {
+			int64_t sleep_time = TARGET_FRAME_TIME * 1000000;
+			usleep(sleep_time);
 		}
 	}
 }
