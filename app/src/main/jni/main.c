@@ -162,6 +162,9 @@ android_main(struct android_app* state)
 				return;
 		}
 
+		if (state->destroyRequested)
+			return;
+
 		if (g_initialized) {
 			main_loop_step();
 			/* mouse_reset(&mouse); */
